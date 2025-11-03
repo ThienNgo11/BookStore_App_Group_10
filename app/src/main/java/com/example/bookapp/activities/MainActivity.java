@@ -1,5 +1,6 @@
 package com.example.bookapp.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -39,16 +40,23 @@ public class MainActivity extends AppCompatActivity {
         loadBooks(); // Load all books
 
         SearchView searchView = findViewById(R.id.searchView);
+        // --- THAY ĐỔI LOGIC TÌM KIẾM Ở ĐÂY ---
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                filterBooks(query);
-                return false;
+                // Khi người dùng nhấn Enter hoặc nút tìm kiếm
+                if (query != null && !query.trim().isEmpty()) {
+                    Intent intent = new Intent(MainActivity.this, SearchResultsActivity.class);
+                    intent.putExtra("SEARCH_QUERY", query); // Gửi từ khóa tìm kiếm
+                    startActivity(intent);
+                }
+                searchView.clearFocus(); // Ẩn bàn phím
+                return true;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                filterBooks(newText);
+                // Không làm gì khi người dùng đang gõ
                 return false;
             }
         });
@@ -96,17 +104,17 @@ public class MainActivity extends AppCompatActivity {
         rvBooks.setAdapter(adapter);
     }
 
-    private void filterBooks(String query) {
-        bookList.clear();
-        if (query.isEmpty()) {
-            bookList.addAll(fullBookList);
-        } else {
-            for (Book book : fullBookList) {
-                if (book.getTitle().toLowerCase().contains(query.toLowerCase())) {
-                    bookList.add(book);
-                }
-            }
-        }
-        adapter.notifyDataSetChanged();
-    }
+//    private void filterBooks(String query) {
+//        bookList.clear();
+//        if (query.isEmpty()) {
+//            bookList.addAll(fullBookList);
+//        } else {
+//            for (Book book : fullBookList) {
+//                if (book.getTitle().toLowerCase().contains(query.toLowerCase())) {
+//                    bookList.add(book);
+//                }
+//            }
+//        }
+//        adapter.notifyDataSetChanged();
+//    }
 }
