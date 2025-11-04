@@ -24,6 +24,8 @@
         <activity android:name=".activities.AdminActivity" />
         <activity android:name=".activities.GuestActivity" />
         <activity android:name=".activities.RegisterActivity" />
+        <activity android:name=".activities.UsersManagementActivity" />
+        <activity android:name=".activities.OrdersActivity" />
     </application>
 
 </manifest>

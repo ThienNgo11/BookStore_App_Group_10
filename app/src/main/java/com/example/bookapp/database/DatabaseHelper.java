@@ -25,7 +25,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "email TEXT," +
                 "phone TEXT," +
                 "address TEXT," +
-                "role TEXT DEFAULT 'user')");
+                "role TEXT DEFAULT 'user'," +
+                "is_active INTEGER DEFAULT 1)");
 
         // === BOOKS ===
         db.execSQL("CREATE TABLE books (" +
@@ -67,8 +68,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "FOREIGN KEY (book_id) REFERENCES books(id))");
 
         // Thêm users mặc định
-        db.execSQL("INSERT INTO users (username, password, fullname, role) VALUES ('admin', 'admin', 'Administrator', 'admin')");
-        db.execSQL("INSERT INTO users (username, password, fullname, role) VALUES ('user', 'user', 'User', 'user')");
+        db.execSQL("INSERT INTO users (username, password, fullname, role, is_active) VALUES ('admin', 'admin', 'Admin', 'admin', 1)");
+        db.execSQL("INSERT INTO users (username, password, fullname, role, is_active) VALUES ('user', 'user', 'User', 'user', 1)");
+        db.execSQL("INSERT INTO users (username, password, fullname, role, is_active) VALUES ('user2', 'user2', 'User 2', 'user', 1)");
+        db.execSQL("INSERT INTO users (username, password, fullname, role, is_active) VALUES ('user3', 'user3', 'User 3', 'user', 0)"); // Inactive user
 
         // Thêm books mặc định
         db.execSQL("INSERT INTO books (title, author, category, description, price, stock, image) VALUES " +
@@ -90,8 +93,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("INSERT INTO order_items (order_id, book_id, quantity, price) VALUES (3, 1, 1, 150000)");
 
         // Thêm cart mặc định (cho user_id=2 và 3, với book_id)
-        db.execSQL("INSERT INTO cart (user_id, book_id, quantity) VALUES (2, 4, 2)");
-        db.execSQL("INSERT INTO cart (user_id, book_id, quantity) VALUES (2, 5, 1)");
+        db.execSQL("INSERT INTO cart (user_id, book_id, quantity) VALUES (2, 1, 2)");
+        db.execSQL("INSERT INTO cart (user_id, book_id, quantity) VALUES (2, 2, 1)");
         db.execSQL("INSERT INTO cart (user_id, book_id, quantity) VALUES (3, 2, 3)");
     }
 

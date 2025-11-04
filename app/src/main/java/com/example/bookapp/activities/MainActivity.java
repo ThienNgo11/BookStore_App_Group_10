@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView rvBooks;
     private BookAdapter adapter;
     private List<Book> bookList = new ArrayList<>();
-    private List<Book> fullBookList = new ArrayList<>(); // Để lưu danh sách gốc cho search
+    private List<Book> fullBookList = new ArrayList<>();
     private BookDAO bookDAO;
 
     @Override
@@ -34,9 +34,11 @@ public class MainActivity extends AppCompatActivity {
 
         bookDAO = new BookDAO(this);
         rvBooks = findViewById(R.id.rvBooks);
-        rvBooks.setLayoutManager(new GridLayoutManager(this, 2)); // Grid 2 cột
+        rvBooks.setLayoutManager(new GridLayoutManager(this, 2));
 
-        loadBooks(); // Load all books
+        // Khởi tạo Adapter ở đây để tránh lỗi NullPointerException khi gọi filterBooks/loadBooks
+        setupAdapter();
+        loadBooks();
 
         SearchView searchView = findViewById(R.id.searchView);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -53,25 +55,22 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Nếu cần welcome message, có thể thêm TextView riêng hoặc Toast
         String username = getIntent().getStringExtra("USERNAME");
         if (username != null) {
             Toast.makeText(this, "Chào mừng: " + username, Toast.LENGTH_SHORT).show();
         }
 
-        // Set up Bottom Navigation
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigation);
         bottomNavigationView.setOnItemSelectedListener(new BottomNavigationView.OnItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 int itemId = item.getItemId();
                 if (itemId == R.id.nav_home) {
-                    // Đã ở home, không làm gì hoặc reload
                     loadBooks();
                     return true;
                 } else if (itemId == R.id.nav_cart) {
                     Toast.makeText(MainActivity.this, "Giỏ hàng (Chưa implement)", Toast.LENGTH_SHORT).show();
-                    // Intent to CartActivity or switch fragment
+                    // Intent to CartActivity
                     return true;
                 } else if (itemId == R.id.nav_orders) {
                     Toast.makeText(MainActivity.this, "Đơn hàng (Chưa implement)", Toast.LENGTH_SHORT).show();
@@ -87,13 +86,26 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void setupAdapter() {
+        // Khởi tạo Adapter với một listener trống hoặc có chức năng mặc định (ví dụ: xem chi tiết)
+        adapter = new BookAdapter(this, bookList, new BookAdapter.OnBookClickListener() {
+            @Override
+            public void onBookClick(Book book) {
+                // TODO: Triển khai chức năng cho người dùng/khách hàng
+                Toast.makeText(MainActivity.this, "Xem chi tiết sách: " + book.getTitle(), Toast.LENGTH_SHORT).show();
+                // Ví dụ: startActivity(new Intent(MainActivity.this, BookDetailActivity.class).putExtra("BOOK_ID", book.getId()));
+            }
+        });
+        rvBooks.setAdapter(adapter);
+    }
+
     private void loadBooks() {
         bookList.clear();
         fullBookList.clear();
         bookList.addAll(bookDAO.getAllBooks());
         fullBookList.addAll(bookList);
-        adapter = new BookAdapter(this, bookList);
-        rvBooks.setAdapter(adapter);
+        // Không cần khởi tạo lại adapter ở đây.
+        adapter.notifyDataSetChanged();
     }
 
     private void filterBooks(String query) {

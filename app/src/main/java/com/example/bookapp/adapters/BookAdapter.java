@@ -6,7 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -22,10 +21,18 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookViewHolder
 
     private List<Book> bookList;
     private Context context;
+    private OnBookClickListener listener; // <--- THÊM INTERFACE NÀY
 
-    public BookAdapter(Context context, List<Book> bookList) {
+    // 1. Định nghĩa Interface
+    public interface OnBookClickListener {
+        void onBookClick(Book book);
+    }
+
+    // 2. Cập nhật Constructor
+    public BookAdapter(Context context, List<Book> bookList, OnBookClickListener listener) {
         this.context = context;
         this.bookList = bookList;
+        this.listener = listener;
     }
 
     @NonNull
@@ -42,7 +49,7 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookViewHolder
         holder.tvAuthor.setText("Tác giả: " + book.getAuthor());
         holder.tvPrice.setText(String.format("%,.0f đ", book.getPrice()));
 
-        // Load image từ URL dùng Glide
+        // Load image từ URL dùng Glide (giữ nguyên)
         Glide.with(context)
                 .load(book.getImage()) // URL string từ model
                 .placeholder(R.drawable.ic_launcher_background) // Hình default trong khi load
@@ -50,10 +57,11 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookViewHolder
                 .diskCacheStrategy(DiskCacheStrategy.ALL) // Cache để load nhanh hơn lần sau
                 .into(holder.ivImage);
 
-        // Click để thêm vào cart (chỉ cho user, guest có thể disable)
+        // 3. THAY THẾ CLICK LOGIC BẰNG LISTENER
         holder.itemView.setOnClickListener(v -> {
-            Toast.makeText(context, "Thêm " + book.getTitle() + " vào giỏ hàng", Toast.LENGTH_SHORT).show();
-            // Logic thêm vào cart table ở đây (sẽ implement sau nếu cần)
+            if (listener != null) {
+                listener.onBookClick(book);
+            }
         });
     }
 
