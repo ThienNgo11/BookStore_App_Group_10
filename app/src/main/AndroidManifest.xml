@@ -14,10 +14,16 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.BookApp">
         <activity
+            android:name=".activities.ProfileActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.ProfileActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.SearchResultsActivity"
             android:exported="false" />
         <activity
-            android:name=".SearchResultsActivity"
+            android:name=".activities.SearchResultsActivity"
             android:exported="false" />
         <activity
             android:name=".activities.LoginActivity"

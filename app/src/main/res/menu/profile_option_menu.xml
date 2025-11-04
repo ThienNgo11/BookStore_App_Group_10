@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/tools">
+
+    <item
+        android:id="@+id/menu_edit_info"
+        android:title="Sửa thông tin"
+        android:icon="@android:drawable/ic_menu_edit"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_change_password"
+        android:title="Đổi mật khẩu"
+        android:icon="@android:drawable/ic_lock_lock"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_logout"
+        android:title="Đăng xuất"
+        android:icon="@android:drawable/ic_menu_close_clear_cancel"
+        app:showAsAction="never" />
+</menu>

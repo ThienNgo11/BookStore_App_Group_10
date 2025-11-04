@@ -3,6 +3,7 @@ package com.example.bookapp.activities;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -109,8 +110,9 @@ public class AdminActivity extends AppCompatActivity {
                 // Intent to OrdersActivity
                 return true;
             } else if (itemId == R.id.nav_profile) {
-                Toast.makeText(this, "Tài khoản Admin", Toast.LENGTH_SHORT).show();
-                // Intent to ProfileActivity
+                Intent intent = new Intent(AdminActivity.this, ProfileActivity.class);
+                intent.putExtra("USERNAME", getIntent().getStringExtra("USERNAME")); // Truyền username
+                startActivity(intent);
                 return true;
             }
             return false;

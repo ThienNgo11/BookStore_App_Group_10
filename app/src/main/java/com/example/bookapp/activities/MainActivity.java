@@ -86,8 +86,9 @@ public class MainActivity extends AppCompatActivity {
                     // Intent to OrdersActivity
                     return true;
                 } else if (itemId == R.id.nav_profile) {
-                    Toast.makeText(MainActivity.this, "Tài khoản (Chưa implement)", Toast.LENGTH_SHORT).show();
-                    // Intent to ProfileActivity
+                    Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
+                    intent.putExtra("USERNAME", getIntent().getStringExtra("USERNAME")); // Truyền username
+                    startActivity(intent);
                     return true;
                 }
                 return false;

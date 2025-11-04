@@ -85,4 +85,43 @@ public class UserDAO {
         cursor.close();
         return count;
     }
+
+    // Thêm vào cuối class UserDAO
+
+    public User getUserByUsername(String username) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        String query = "SELECT * FROM users WHERE username = ?";
+        Cursor cursor = db.rawQuery(query, new String[]{username});
+        User user = null;
+        if (cursor != null && cursor.moveToFirst()) {
+            user = new User();
+            user.setId(cursor.getInt(cursor.getColumnIndexOrThrow("id")));
+            user.setUsername(cursor.getString(cursor.getColumnIndexOrThrow("username")));
+            user.setPassword(cursor.getString(cursor.getColumnIndexOrThrow("password")));
+            user.setFullname(cursor.getString(cursor.getColumnIndexOrThrow("fullname")));
+            user.setEmail(cursor.getString(cursor.getColumnIndexOrThrow("email")));
+            user.setPhone(cursor.getString(cursor.getColumnIndexOrThrow("phone")));
+            user.setAddress(cursor.getString(cursor.getColumnIndexOrThrow("address")));
+            user.setRole(cursor.getString(cursor.getColumnIndexOrThrow("role")));
+            cursor.close();
+        }
+        return user;
+    }
+
+    public void updateUserPassword(int userId, String newPassword) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("password", newPassword);
+        db.update("users", values, "id = ?", new String[]{String.valueOf(userId)});
+    }
+
+    public void updateUserInfo(User user) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("fullname", user.getFullname());
+        values.put("email", user.getEmail());
+        values.put("phone", user.getPhone());
+        values.put("address", user.getAddress());
+        db.update("users", values, "id = ?", new String[]{String.valueOf(user.getId())});
+    }
 }
