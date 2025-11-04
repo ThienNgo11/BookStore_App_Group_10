@@ -2,11 +2,13 @@ package com.example.bookapp.activities;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+
 import android.content.DialogInterface;
+
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -58,23 +60,20 @@ public class AdminActivity extends AppCompatActivity {
         rvBooks = findViewById(R.id.rvBooks);
         rvBooks.setLayoutManager(new GridLayoutManager(this, 2));
 
-        // Khởi tạo adapter chỉ một lần, với override cho long click (sửa/xóa)
-        adapter = new BookAdapter(this, bookList) {
+        // KHỞI TẠO ADAPTER MỚI VÀ XỬ LÝ CLICK TẠI ĐÂY
+        adapter = new BookAdapter(this, bookList, new BookAdapter.OnBookClickListener() {
             @Override
-            public void onBindViewHolder(@NonNull BookViewHolder holder, int position) {
-                super.onBindViewHolder(holder, position);
-                holder.itemView.setOnLongClickListener(v -> {
-                    showEditDeleteDialog(bookList.get(position));
-                    return true;
-                });
+            public void onBookClick(Book book) {
+                showEditDeleteDialog(book);
             }
-        };
+        });
+
         rvBooks.setAdapter(adapter);
 
-        loadStatistics(); // Load thống kê
-        loadBooks(); // Load sách
+        loadStatistics();
+        loadBooks();
 
-        // Search
+
         SearchView searchView = findViewById(R.id.searchView);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -90,29 +89,28 @@ public class AdminActivity extends AppCompatActivity {
             }
         });
 
-        // FAB add book
         FloatingActionButton fabAddBook = findViewById(R.id.fabAddBook);
         fabAddBook.setOnClickListener(v -> showAddBookDialog());
 
-        // Bottom Navigation
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigation);
+        bottomNavigationView.setSelectedItemId(R.id.nav_books); // Thêm dòng này để chọn đúng tab
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
             if (itemId == R.id.nav_books) {
-                loadBooks(); // Reload sách
+                loadBooks();
                 return true;
             } else if (itemId == R.id.nav_users) {
-                Toast.makeText(this, "Quản lý User (Chưa implement)", Toast.LENGTH_SHORT).show();
-                // Intent to UsersActivity
+                Intent intent = new Intent(AdminActivity.this, UsersManagementActivity.class);
+                startActivity(intent);
+                finish(); // Thêm finish() để tránh Activity chồng chéo
                 return true;
             } else if (itemId == R.id.nav_orders) {
-                Toast.makeText(this, "Quản lý Đơn hàng (Chưa implement)", Toast.LENGTH_SHORT).show();
-                // Intent to OrdersActivity
+                Intent intent = new Intent(AdminActivity.this, OrdersActivity.class);
+                startActivity(intent);
+                finish(); // Thêm finish()
                 return true;
             } else if (itemId == R.id.nav_profile) {
-                Intent intent = new Intent(AdminActivity.this, ProfileActivity.class);
-                intent.putExtra("USERNAME", getIntent().getStringExtra("USERNAME")); // Truyền username
-                startActivity(intent);
+                Toast.makeText(this, "Tài khoản Admin", Toast.LENGTH_SHORT).show();
                 return true;
             }
             return false;
@@ -151,7 +149,6 @@ public class AdminActivity extends AppCompatActivity {
         adapter.notifyDataSetChanged();
     }
 
-    // Dialog thêm sách
     private void showAddBookDialog() {
         try {
             Dialog dialog = new Dialog(this);
@@ -187,7 +184,7 @@ public class AdminActivity extends AppCompatActivity {
         }
     }
 
-    // Dialog edit/delete sách
+    // Dialog edit/delete sách (Giữ nguyên)
     private void showEditDeleteDialog(Book book) {
         new AlertDialog.Builder(this)
                 .setTitle("Xác nhận")

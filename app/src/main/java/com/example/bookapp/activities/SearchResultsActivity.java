@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -80,7 +81,18 @@ public class SearchResultsActivity extends AppCompatActivity {
             rvSearchResults.setVisibility(View.VISIBLE);
             tvNoResults.setVisibility(View.GONE);
             rvSearchResults.setLayoutManager(new GridLayoutManager(this, 2));
-            adapter = new BookAdapter(this, searchResultList);
+
+            // SỬA Ở ĐÂY: Thêm listener cho BookAdapter
+            adapter = new BookAdapter(this, searchResultList, new BookAdapter.OnBookClickListener() {
+                @Override
+                public void onBookClick(Book book) {
+                    // Trong SearchResultsActivity, có thể hiển thị chi tiết sách
+                    // hoặc thêm vào giỏ hàng tùy theo nhu cầu
+                    Toast.makeText(SearchResultsActivity.this,
+                            "Xem chi tiết: " + book.getTitle(), Toast.LENGTH_SHORT).show();
+                    // Có thể mở Activity chi tiết sách ở đây
+                }
+            });
             rvSearchResults.setAdapter(adapter);
         }
     }
