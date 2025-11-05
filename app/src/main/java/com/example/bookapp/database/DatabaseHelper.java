@@ -3,6 +3,7 @@ package com.example.bookapp.database;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import com.example.bookapp.utils.SecurityUtils;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
@@ -68,10 +69,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "FOREIGN KEY (book_id) REFERENCES books(id))");
 
         // Thêm users mặc định
-        db.execSQL("INSERT INTO users (username, password, fullname, role, is_active) VALUES ('admin', 'admin', 'Admin', 'admin', 1)");
-        db.execSQL("INSERT INTO users (username, password, fullname, role, is_active) VALUES ('user', 'user', 'User', 'user', 1)");
-        db.execSQL("INSERT INTO users (username, password, fullname, role, is_active) VALUES ('user2', 'user2', 'User 2', 'user', 1)");
-        db.execSQL("INSERT INTO users (username, password, fullname, role, is_active) VALUES ('user3', 'user3', 'User 3', 'user', 0)"); // Inactive user
+        db.execSQL("INSERT INTO users (username, password, fullname, role, is_active) VALUES ('admin', '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918', 'Admin', 'admin', 1)");
+        db.execSQL("INSERT INTO users (username, password, fullname, role, is_active) VALUES ('user', '04f8996da763b7a969b1028ee3007569eaf3a635486ddab211d512c85b9df8fb', 'User', 'user', 1)");
 
         // Thêm books mặc định
         db.execSQL("INSERT INTO books (title, author, category, description, price, stock, image) VALUES " +
