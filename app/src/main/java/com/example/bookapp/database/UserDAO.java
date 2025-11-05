@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import com.example.bookapp.utils.SecurityUtils;
 
 import com.example.bookapp.models.User;
 
@@ -17,14 +18,18 @@ public class UserDAO {
         dbHelper = new DatabaseHelper(context);
     }
 
-    public User authenticateUser(String username, String password) {
+    public User authenticateUser(String username, String plainTextPassword) {
+
+        //Băm mật khẩu
+        String hashedPassword = SecurityUtils.hashPassword(plainTextPassword);
+
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         String[] projection = {
                 "id", "username", "password", "fullname", "email", "phone", "address", "role", "is_active"
         };
         // Chỉ cho phép đăng nhập nếu tài khoản còn active
         String selection = "username = ? AND password = ? AND is_active = 1";
-        String[] selectionArgs = {username, password};
+        String[] selectionArgs = {username, hashedPassword};
         Cursor cursor = db.query(
                 "users",
                 projection,
