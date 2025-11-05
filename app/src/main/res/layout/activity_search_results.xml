@@ -1,29 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:padding="8dp"
+    android:background="#F9F9F9"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/tvNoResults"
-        android:text="Không tìm thấy kết quả"
-        android:visibility="gone"
-        android:gravity="center"
-        android:textSize="16sp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-
-    <!-- Bộ lọc & sắp xếp -->
-    <Spinner
-        android:id="@+id/spinnerSort"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/searchCard"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:entries="@array/sort_options"/>
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="12dp"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="4dp">
+
+        <androidx.appcompat.widget.SearchView
+            android:id="@+id/searchViewResults"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:iconifiedByDefault="false"
+            app:queryHint="Tìm kiếm sách..."
+            android:background="@android:color/transparent"
+            android:theme="@style/CustomSearchViewTheme" />
+    </androidx.cardview.widget.CardView>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:paddingHorizontal="12dp"
+        android:paddingVertical="8dp"
+        android:background="@android:color/white"
+        android:elevation="2dp"
+        android:layout_marginTop="8dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnOpenFilter"
+            android:text="Bộ lọc"
+            app:icon="@drawable/ic_filter_list"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/tvActiveFilters"
+            android:text="Tất cả"
+            android:textSize="12sp"
+            android:textColor="#444"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="8dp"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layoutNoResults"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="16dp"
+        android:visibility="gone"> <ImageView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@drawable/ic_search_off" app:tint="#888888"
+        android:layout_marginBottom="16dp"/>
+
+        <TextView
+            android:id="@+id/tvNoResultsTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Không tìm thấy kết quả"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#333"
+            android:layout_marginBottom="8dp"/>
+
+        <TextView
+            android:id="@+id/tvNoResultsSubtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hãy thử dùng từ khóa khác hoặc\nbỏ bớt bộ lọc của bạn."
+            android:textSize="14sp"
+            android:textColor="#666"
+            android:gravity="center"/>
+    </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvSearchResults"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:layout_weight="1"
+        android:padding="6dp"
+        android:clipToPadding="false"/>
 </LinearLayout>

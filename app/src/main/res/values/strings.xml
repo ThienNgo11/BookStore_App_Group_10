@@ -1,11 +1,31 @@
 <resources>
     <string name="app_name">BookApp</string>
+
+    <!-- Find and filter -->
+    <string-array name="category_options">
+        <item>Tất cả</item>
+        <item>Tiểu thuyết</item>
+        <item>Lập trình</item>
+        <item>Kinh tế</item>
+        <item>Thiếu nhi</item>
+    </string-array>
+
+    <string-array name="price_options">
+        <item>Tất cả</item>
+        <item>Dưới 100k</item>
+        <item>100k - 200k</item>
+        <item>Trên 200k</item>
+    </string-array>
+
     <string-array name="sort_options">
         <item>Mặc định</item>
         <item>Giá tăng dần</item>
         <item>Giá giảm dần</item>
-        <item>Tên A-Z</item>
+        <item>Tên (A-Z)</item>
     </string-array>
+    <!-- End Find and filter -->
+
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
