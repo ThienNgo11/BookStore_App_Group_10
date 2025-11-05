@@ -15,6 +15,7 @@ import com.example.bookapp.R;
 import com.example.bookapp.adapters.BookAdapter;
 import com.example.bookapp.database.BookDAO;
 import com.example.bookapp.models.Book;
+import com.example.bookapp.utils.GridSpacingItemDecoration;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
@@ -36,6 +37,9 @@ public class MainActivity extends AppCompatActivity {
         bookDAO = new BookDAO(this);
         rvBooks = findViewById(R.id.rvBooks);
         rvBooks.setLayoutManager(new GridLayoutManager(this, 2));
+
+        int spacingInPixels = getResources().getDimensionPixelSize(R.dimen.grid_spacing);
+        rvBooks.addItemDecoration(new GridSpacingItemDecoration(2, spacingInPixels, true));
 
         // Khởi tạo Adapter ở đây để tránh lỗi NullPointerException khi gọi filterBooks/loadBooks
         setupAdapter();

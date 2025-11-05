@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     app:cardCornerRadius="8dp"
-    app:cardElevation="4dp"
+    app:cardElevation="2dp"
     android:layout_margin="8dp">
 
     <LinearLayout
@@ -22,25 +22,31 @@
 
         <TextView
             android:id="@+id/tvBookTitle"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
             android:text="Title"
             android:textStyle="bold"
-            android:textSize="16sp" />
+            android:textSize="16sp"
+            android:maxLines="2"
+            android:ellipsize="end"/>
 
         <TextView
             android:id="@+id/tvBookAuthor"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
             android:text="Author"
+            android:textColor="?android:attr/textColorSecondary"
             android:textSize="14sp" />
 
         <TextView
             android:id="@+id/tvBookPrice"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
             android:text="Price"
-            android:textColor="#FF0000"
+            android:textColor="#D32F2F"
             android:textSize="16sp"
             android:textStyle="bold" />
 
