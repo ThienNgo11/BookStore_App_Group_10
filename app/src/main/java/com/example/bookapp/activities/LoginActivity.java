@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.bookapp.R;
 import com.example.bookapp.database.UserDAO;
 import com.example.bookapp.models.User;
+import com.example.bookapp.utils.SessionManager;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -20,6 +21,7 @@ public class LoginActivity extends AppCompatActivity {
     private Button btnLogin, btnGuest;
     private TextView tvRegister;
     private UserDAO userDAO;
+    private SessionManager sessionManager;   // ← thêm dòng này
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,30 +29,13 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         userDAO = new UserDAO(this);
+        sessionManager = new SessionManager(this); // ← thêm dòng này
 
         initViews();
 
-        btnLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                loginUser();
-            }
-        });
-
-        btnGuest.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                loginAsGuest();
-            }
-        });
-
-        // Thêm sự kiện cho đăng ký
-        tvRegister.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                goToRegister();
-            }
-        });
+        btnLogin.setOnClickListener(v -> loginUser());
+        btnGuest.setOnClickListener(v -> loginAsGuest());
+        tvRegister.setOnClickListener(v -> goToRegister());
     }
 
     private void initViews() {
@@ -58,15 +43,13 @@ public class LoginActivity extends AppCompatActivity {
         etPassword = findViewById(R.id.etPassword);
         btnLogin = findViewById(R.id.btnLogin);
         btnGuest = findViewById(R.id.btnGuest);
-        tvRegister = findViewById(R.id.tvRegister); // Thêm dòng này
+        tvRegister = findViewById(R.id.tvRegister);
     }
 
     private void goToRegister() {
-        Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
-        startActivity(intent);
+        startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
     }
 
-    // Các phương thức khác giữ nguyên...
     private void loginUser() {
         String username = etUsername.getText().toString().trim();
         String password = etPassword.getText().toString().trim();
@@ -79,26 +62,32 @@ public class LoginActivity extends AppCompatActivity {
         User user = userDAO.authenticateUser(username, password);
 
         if (user != null) {
-            // Đăng nhập thành công
+
+            // ✅ LƯU SESSION BẮT BUỘC
+            sessionManager.createLoginSession(
+                    user.getId(),
+                    user.getUsername(),
+                    user.getFullname(),
+                    user.getRole()
+            );
+
             Intent intent;
             if ("admin".equals(user.getRole())) {
                 intent = new Intent(LoginActivity.this, AdminActivity.class);
             } else {
                 intent = new Intent(LoginActivity.this, MainActivity.class);
             }
-            intent.putExtra("USER_ID", user.getId());
-            intent.putExtra("USERNAME", user.getUsername());
-            intent.putExtra("ROLE", user.getRole());
+
             startActivity(intent);
             finish();
+
         } else {
             Toast.makeText(this, "Tên đăng nhập hoặc mật khẩu không đúng", Toast.LENGTH_SHORT).show();
         }
     }
 
     private void loginAsGuest() {
-        Intent intent = new Intent(LoginActivity.this, GuestActivity.class);
-        startActivity(intent);
+        startActivity(new Intent(LoginActivity.this, GuestActivity.class));
         finish();
     }
 }

@@ -19,6 +19,32 @@ public class OrderDAO {
         dbHelper = new DatabaseHelper(context);
     }
 
+    // Tạo đơn hàng mới và trả về order_id
+    public int createOrder(int userId, String orderDate, double totalAmount, String status) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("user_id", userId);
+        values.put("order_date", orderDate);
+        values.put("total_amount", totalAmount);
+        values.put("status", status);
+
+        long orderId = db.insert("orders", null, values);
+        return (int) orderId;
+    }
+
+    // Thêm order item
+    public boolean addOrderItem(int orderId, int bookId, int quantity, double price) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("order_id", orderId);
+        values.put("book_id", bookId);
+        values.put("quantity", quantity);
+        values.put("price", price);
+
+        long result = db.insert("order_items", null, values);
+        return result != -1;
+    }
+
     public int getTotalOrders() {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM orders", null);
@@ -30,7 +56,6 @@ public class OrderDAO {
 
     public double getTotalRevenue() {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        // Chỉ tính doanh thu của các đơn hàng đã 'Completed' hoặc 'Accepted'
         Cursor cursor = db.rawQuery("SELECT SUM(total_amount) FROM orders WHERE status = 'Completed' OR status = 'Accepted' OR status = 'Shipped'", null);
         cursor.moveToFirst();
         double revenue = cursor.getDouble(0);
@@ -38,12 +63,10 @@ public class OrderDAO {
         return revenue;
     }
 
-    // === MỚI: Lấy tất cả đơn hàng (kèm tên người dùng) ===
     public List<Order> getAllOrders() {
         List<Order> orderList = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
-        // Sử dụng JOIN để lấy tên người dùng từ bảng 'users'
         String query = "SELECT o.id, o.user_id, u.fullname, o.order_date, o.total_amount, o.status " +
                 "FROM orders o " +
                 "JOIN users u ON o.user_id = u.id " +
@@ -65,21 +88,18 @@ public class OrderDAO {
             } while (cursor.moveToNext());
         }
         cursor.close();
-        db.close();
         return orderList;
     }
 
-    // === MỚI: Cập nhật trạng thái đơn hàng ===
     public boolean updateOrderStatus(int orderId, String newStatus) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("status", newStatus);
 
         int rowsAffected = db.update("orders", values, "id = ?", new String[]{String.valueOf(orderId)});
-        db.close();
         return rowsAffected > 0;
     }
-    // Thêm vào OrderDAO.java
+
     public List<OrderItem> getOrderItems(int orderId) {
         List<OrderItem> orderItems = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
@@ -136,5 +156,33 @@ public class OrderDAO {
         }
         cursor.close();
         return order;
+    }
+    public List<Order> getUserOrders(int userId) {
+        List<Order> orderList = new ArrayList<>();
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+        String query = "SELECT o.id, o.user_id, u.fullname, o.order_date, o.total_amount, o.status " +
+                "FROM orders o " +
+                "JOIN users u ON o.user_id = u.id " +
+                "WHERE o.user_id = ? " +
+                "ORDER BY o.order_date DESC";
+
+        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(userId)});
+
+        if (cursor.moveToFirst()) {
+            do {
+                int id = cursor.getInt(cursor.getColumnIndexOrThrow("id"));
+                String userName = cursor.getString(cursor.getColumnIndexOrThrow("fullname"));
+                String orderDate = cursor.getString(cursor.getColumnIndexOrThrow("order_date"));
+                double totalAmount = cursor.getDouble(cursor.getColumnIndexOrThrow("total_amount"));
+                String status = cursor.getString(cursor.getColumnIndexOrThrow("status"));
+
+                Order order = new Order(id, userId, userName, orderDate, totalAmount, status);
+                orderList.add(order);
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        return orderList;
     }
 }

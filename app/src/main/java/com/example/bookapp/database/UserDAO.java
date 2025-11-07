@@ -113,11 +113,12 @@ public class UserDAO {
         return user;
     }
 
-    public void updateUserPassword(int userId, String newPassword) {
+    public void updateUserPassword(int userId, String hashedPassword) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put("password", newPassword);
+        values.put("password", hashedPassword); // Lưu chuỗi Hex 64 ký tự
         db.update("users", values, "id = ?", new String[]{String.valueOf(userId)});
+        db.close();
     }
 
     public void updateUserInfo(User user) {
@@ -208,5 +209,36 @@ public class UserDAO {
         values.put("is_active", isActive ? 1 : 0);
         int result = db.update("users", values, "id = ?", new String[]{String.valueOf(userId)});
         return result > 0;
+    }
+    public User getUserById(int userId) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        String[] projection = {
+                "id", "username", "password", "fullname", "email", "phone", "address", "role"
+        };
+        String selection = "id = ?";
+        String[] selectionArgs = {String.valueOf(userId)};
+        Cursor cursor = db.query(
+                "users",
+                projection,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                null
+        );
+        User user = null;
+        if (cursor != null && cursor.moveToFirst()) {
+            user = new User();
+            user.setId(cursor.getInt(cursor.getColumnIndexOrThrow("id")));
+            user.setUsername(cursor.getString(cursor.getColumnIndexOrThrow("username")));
+            user.setPassword(cursor.getString(cursor.getColumnIndexOrThrow("password")));
+            user.setFullname(cursor.getString(cursor.getColumnIndexOrThrow("fullname")));
+            user.setEmail(cursor.getString(cursor.getColumnIndexOrThrow("email")));
+            user.setPhone(cursor.getString(cursor.getColumnIndexOrThrow("phone")));
+            user.setAddress(cursor.getString(cursor.getColumnIndexOrThrow("address")));
+            user.setRole(cursor.getString(cursor.getColumnIndexOrThrow("role")));
+            cursor.close();
+        }
+        return user;
     }
 }

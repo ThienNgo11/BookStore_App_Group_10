@@ -21,7 +21,7 @@ import com.example.bookapp.utils.SessionManager;
 import com.example.bookapp.utils.SecurityUtils;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-public class ProfileActivity extends AppCompatActivity {
+public class ProfileAdminActivity extends AppCompatActivity {
 
     private TextView tvUsername, tvFullname, tvEmail, tvPhone, tvAddress;
     private UserDAO userDAO;
@@ -78,18 +78,18 @@ public class ProfileActivity extends AppCompatActivity {
             int id = item.getItemId();
 
             if (id == R.id.nav_home) {
-                startActivity(new Intent(this, MainActivity.class));
+                startActivity(new Intent(this, AdminActivity.class));
                 finish();
                 return true;
-            } else if (id == R.id.nav_cart) {
-                startActivity(new Intent(this, CartActivity.class));
-                finish();
+            } else if (id == R.id.nav_users) {
+                Intent intent = new Intent(this, UsersManagementActivity.class);
+                startActivity(intent);
+                finish(); // Thêm finish() để tránh Activity chồng chéo
                 return true;
             } else if (id == R.id.nav_orders) {
-                startActivity(new Intent(this, UserOrdersActivity.class));
-                finish();
-                return true;
-            } else if (id == R.id.nav_profile) {
+                Intent intent = new Intent(this, OrdersActivity.class);
+                startActivity(intent);
+                finish(); // Thêm finish()
                 return true;
             }
             return false;

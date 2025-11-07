@@ -16,6 +16,7 @@ import com.example.bookapp.adapters.BookAdapter;
 import com.example.bookapp.database.BookDAO;
 import com.example.bookapp.models.Book;
 import com.example.bookapp.utils.GridSpacingItemDecoration;
+import com.example.bookapp.utils.SessionManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
@@ -28,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
     private List<Book> bookList = new ArrayList<>();
     private List<Book> fullBookList = new ArrayList<>();
     private BookDAO bookDAO;
+    private SessionManager sessionManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,39 +37,37 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         bookDAO = new BookDAO(this);
+        sessionManager = new SessionManager(this);
+
         rvBooks = findViewById(R.id.rvBooks);
         rvBooks.setLayoutManager(new GridLayoutManager(this, 2));
 
         int spacingInPixels = getResources().getDimensionPixelSize(R.dimen.grid_spacing);
         rvBooks.addItemDecoration(new GridSpacingItemDecoration(2, spacingInPixels, true));
 
-        // Khởi tạo Adapter ở đây để tránh lỗi NullPointerException khi gọi filterBooks/loadBooks
         setupAdapter();
         loadBooks();
 
         SearchView searchView = findViewById(R.id.searchView);
-        // --- THAY ĐỔI LOGIC TÌM KIẾM Ở ĐÂY ---
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                // Khi người dùng nhấn Enter hoặc nút tìm kiếm
                 if (query != null && !query.trim().isEmpty()) {
                     Intent intent = new Intent(MainActivity.this, SearchResultsActivity.class);
-                    intent.putExtra("SEARCH_QUERY", query); // Gửi từ khóa tìm kiếm
+                    intent.putExtra("SEARCH_QUERY", query);
                     startActivity(intent);
                 }
-                searchView.clearFocus(); // Ẩn bàn phím
+                searchView.clearFocus();
                 return true;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                // Không làm gì khi người dùng đang gõ
                 return false;
             }
         });
 
-        String username = getIntent().getStringExtra("USERNAME");
+        String username = sessionManager.getUsername();
         if (username != null) {
             Toast.makeText(this, "Chào mừng: " + username, Toast.LENGTH_SHORT).show();
         }
@@ -81,16 +81,15 @@ public class MainActivity extends AppCompatActivity {
                     loadBooks();
                     return true;
                 } else if (itemId == R.id.nav_cart) {
-                    Toast.makeText(MainActivity.this, "Giỏ hàng (Chưa implement)", Toast.LENGTH_SHORT).show();
-                    // Intent to CartActivity
+                    Intent intent = new Intent(MainActivity.this, CartActivity.class);
+                    startActivity(intent);
                     return true;
                 } else if (itemId == R.id.nav_orders) {
-                    Toast.makeText(MainActivity.this, "Đơn hàng (Chưa implement)", Toast.LENGTH_SHORT).show();
-                    // Intent to OrdersActivity
+                    Intent intent = new Intent(MainActivity.this, UserOrdersActivity.class);
+                    startActivity(intent);
                     return true;
                 } else if (itemId == R.id.nav_profile) {
                     Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
-                    intent.putExtra("USERNAME", getIntent().getStringExtra("USERNAME")); // Truyền username
                     startActivity(intent);
                     return true;
                 }
@@ -100,13 +99,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupAdapter() {
-        // Khởi tạo Adapter với một listener trống hoặc có chức năng mặc định (ví dụ: xem chi tiết)
         adapter = new BookAdapter(this, bookList, new BookAdapter.OnBookClickListener() {
             @Override
             public void onBookClick(Book book) {
-                // TODO: Triển khai chức năng cho người dùng/khách hàng
-                Toast.makeText(MainActivity.this, "Xem chi tiết sách: " + book.getTitle(), Toast.LENGTH_SHORT).show();
-                // Ví dụ: startActivity(new Intent(MainActivity.this, BookDetailActivity.class).putExtra("BOOK_ID", book.getId()));
+                Intent intent = new Intent(MainActivity.this, BookDetailActivity.class);
+                intent.putExtra("BOOK_ID", book.getId());
+                startActivity(intent);
             }
         });
         rvBooks.setAdapter(adapter);
@@ -117,21 +115,6 @@ public class MainActivity extends AppCompatActivity {
         fullBookList.clear();
         bookList.addAll(bookDAO.getAllBooks());
         fullBookList.addAll(bookList);
-        // Không cần khởi tạo lại adapter ở đây.
         adapter.notifyDataSetChanged();
     }
-
-//    private void filterBooks(String query) {
-//        bookList.clear();
-//        if (query.isEmpty()) {
-//            bookList.addAll(fullBookList);
-//        } else {
-//            for (Book book : fullBookList) {
-//                if (book.getTitle().toLowerCase().contains(query.toLowerCase())) {
-//                    bookList.add(book);
-//                }
-//            }
-//        }
-//        adapter.notifyDataSetChanged();
-//    }
 }

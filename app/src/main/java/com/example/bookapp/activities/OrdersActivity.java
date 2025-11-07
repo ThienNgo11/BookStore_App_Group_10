@@ -146,7 +146,8 @@ public class OrdersActivity extends AppCompatActivity {
                 // Đã ở trang orders, không cần làm gì
                 return true;
             } else if (itemId == R.id.nav_profile) {
-                Toast.makeText(this, "Tài khoản Admin", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(this, ProfileAdminActivity.class);
+                startActivity(intent);
                 return true;
             }
             return false;

@@ -3,7 +3,6 @@ package com.example.bookapp.database;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import com.example.bookapp.utils.SecurityUtils;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
@@ -68,33 +67,96 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "FOREIGN KEY (user_id) REFERENCES users(id)," +
                 "FOREIGN KEY (book_id) REFERENCES books(id))");
 
-        // Thêm users mặc định
-        db.execSQL("INSERT INTO users (username, password, fullname, role, is_active) VALUES ('admin', '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918', 'Admin', 'admin', 1)");
-        db.execSQL("INSERT INTO users (username, password, fullname, role, is_active) VALUES ('user', '04f8996da763b7a969b1028ee3007569eaf3a635486ddab211d512c85b9df8fb', 'User', 'user', 1)");
+        // ========================================
+        // THÊM USERS MẶC ĐỊNH
+        // ========================================
+        // Password đã hash: admin = admin, user = user
+        db.execSQL("INSERT INTO users (username, password, fullname, email, phone, address, role, is_active) VALUES " +
+                "('admin', '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918', 'Administrator', 'admin@bookstore.com', '0123456789', 'Hà Nội', 'admin', 1)");
 
-        // Thêm books mặc định
+        db.execSQL("INSERT INTO users (username, password, fullname, email, phone, address, role, is_active) VALUES " +
+                "('user', '04f8996da763b7a969b1028ee3007569eaf3a635486ddab211d512c85b9df8fb', 'Nguyễn Văn A', 'user@gmail.com', '0987654321', 'TP HCM', 'user', 1)");
+
+        db.execSQL("INSERT INTO users (username, password, fullname, email, phone, address, role, is_active) VALUES " +
+                "('user2', '04f8996da763b7a969b1028ee3007569eaf3a635486ddab211d512c85b9df8fb', 'Trần Thị B', 'user2@gmail.com', '0909090909', 'Đà Nẵng', 'user', 1)");
+
+        // ========================================
+        // THÊM BOOKS MẶC ĐỊNH (15 CUỐN)
+        // ========================================
         db.execSQL("INSERT INTO books (title, author, category, description, price, stock, image) VALUES " +
-                "('Book 1: Android Programming', 'Author A', 'Tech', 'Description here', 150000, 10, 'https://www.sachbaokhang.vn/uploads/files/2023/05/01/van-1.jpg')");
+                "('Lập trình Android từ A-Z', 'Nguyễn Văn An', 'Công nghệ', 'Cuốn sách hướng dẫn chi tiết về lập trình Android cho người mới bắt đầu', 250000, 20, 'https://www.sachbaokhang.vn/uploads/files/2023/05/01/van-1.jpg')");
+
         db.execSQL("INSERT INTO books (title, author, category, description, price, stock, image) VALUES " +
-                "('Book 2: Java Basics', 'Author B', 'Programming', 'Intro to Java', 120000, 5, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQD3se4ZhISuAB2hLTBG6PuZWd1yza9rLxdAA&s')");
+                "('Java Căn bản', 'Trần Minh Tuấn', 'Lập trình', 'Học Java từ cơ bản đến nâng cao với nhiều ví dụ thực tế', 180000, 15, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQD3se4ZhISuAB2hLTBG6PuZWd1yza9rLxdAA&s')");
+
         db.execSQL("INSERT INTO books (title, author, category, description, price, stock, image) VALUES " +
-                "('Book 3: SQL for Beginners', 'Author C', 'Database', 'Learn SQL', 100000, 15, 'https://ischool.vn/wp-content/uploads/2022/12/nhung-cuon-sach-cho-tre-10-tuoi-1.jpg')");
+                "('SQL cho người mới bắt đầu', 'Lê Hoàng Nam', 'Cơ sở dữ liệu', 'Tìm hiểu SQL và quản lý database một cách dễ dàng', 150000, 25, 'https://ischool.vn/wp-content/uploads/2022/12/nhung-cuon-sach-cho-tre-10-tuoi-1.jpg')");
 
-        // Thêm orders mặc định (giả sử user_id=2 là 'user', order_date format 'YYYY-MM-DD')
-        db.execSQL("INSERT INTO orders (user_id, order_date, total_amount, status) VALUES (2, '2025-10-01', 270000, 'Pending')");
-        db.execSQL("INSERT INTO orders (user_id, order_date, total_amount, status) VALUES (2, '2025-10-15', 100000, 'Completed')");
-        db.execSQL("INSERT INTO orders (user_id, order_date, total_amount, status) VALUES (3, '2025-11-01', 150000, 'Shipped')");
+        db.execSQL("INSERT INTO books (title, author, category, description, price, stock, image) VALUES " +
+                "('Python cơ bản', 'Phạm Văn Bình', 'Lập trình', 'Khóa học Python từ zero đến hero', 200000, 18, 'https://www.sachbaokhang.vn/uploads/files/2023/05/01/van-1.jpg')");
 
-        // Thêm order_items mặc định (liên kết với orders id=1,2,3 và books id=1,2,3)
-        db.execSQL("INSERT INTO order_items (order_id, book_id, quantity, price) VALUES (1, 1, 1, 150000)");
-        db.execSQL("INSERT INTO order_items (order_id, book_id, quantity, price) VALUES (1, 2, 1, 120000)");
-        db.execSQL("INSERT INTO order_items (order_id, book_id, quantity, price) VALUES (2, 3, 1, 100000)");
-        db.execSQL("INSERT INTO order_items (order_id, book_id, quantity, price) VALUES (3, 1, 1, 150000)");
+        db.execSQL("INSERT INTO books (title, author, category, description, price, stock, image) VALUES " +
+                "('Web Development 2024', 'Đỗ Thị Mai', 'Web', 'Học làm web với HTML, CSS, JavaScript hiện đại', 280000, 12, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQD3se4ZhISuAB2hLTBG6PuZWd1yza9rLxdAA&s')");
 
-        // Thêm cart mặc định (cho user_id=2 và 3, với book_id)
+        db.execSQL("INSERT INTO books (title, author, category, description, price, stock, image) VALUES " +
+                "('React Native Thực chiến', 'Hoàng Văn Dũng', 'Mobile', 'Xây dựng ứng dụng di động với React Native', 320000, 10, 'https://ischool.vn/wp-content/uploads/2022/12/nhung-cuon-sach-cho-tre-10-tuoi-1.jpg')");
+
+        db.execSQL("INSERT INTO books (title, author, category, description, price, stock, image) VALUES " +
+                "('Machine Learning cơ bản', 'Vũ Đức Thắng', 'AI', 'Nhập môn Machine Learning và Deep Learning', 350000, 8, 'https://www.sachbaokhang.vn/uploads/files/2023/05/01/van-1.jpg')");
+
+        db.execSQL("INSERT INTO books (title, author, category, description, price, stock, image) VALUES " +
+                "('Clean Code', 'Robert C. Martin', 'Kỹ thuật', 'Nghệ thuật viết code sạch và dễ maintain', 380000, 15, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQD3se4ZhISuAB2hLTBG6PuZWd1yza9rLxdAA&s')");
+
+        db.execSQL("INSERT INTO books (title, author, category, description, price, stock, image) VALUES " +
+                "('Design Patterns', 'Gang of Four', 'Kỹ thuật', 'Các mẫu thiết kế phần mềm kinh điển', 420000, 6, 'https://ischool.vn/wp-content/uploads/2022/12/nhung-cuon-sach-cho-tre-10-tuoi-1.jpg')");
+
+        db.execSQL("INSERT INTO books (title, author, category, description, price, stock, image) VALUES " +
+                "('Git & GitHub', 'Nguyễn Hữu Phúc', 'Tools', 'Làm chủ Git và quản lý source code hiệu quả', 120000, 30, 'https://www.sachbaokhang.vn/uploads/files/2023/05/01/van-1.jpg')");
+
+        db.execSQL("INSERT INTO books (title, author, category, description, price, stock, image) VALUES " +
+                "('Docker & Kubernetes', 'Lê Minh Hoàng', 'DevOps', 'Container hóa ứng dụng với Docker và K8s', 450000, 7, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQD3se4ZhISuAB2hLTBG6PuZWd1yza9rLxdAA&s')");
+
+        db.execSQL("INSERT INTO books (title, author, category, description, price, stock, image) VALUES " +
+                "('Node.js Backend', 'Trần Quốc Anh', 'Backend', 'Xây dựng API với Node.js và Express', 290000, 14, 'https://ischool.vn/wp-content/uploads/2022/12/nhung-cuon-sach-cho-tre-10-tuoi-1.jpg')");
+
+        db.execSQL("INSERT INTO books (title, author, category, description, price, stock, image) VALUES " +
+                "('Flutter cho mọi người', 'Phạm Thị Lan', 'Mobile', 'Phát triển app đa nền tảng với Flutter', 310000, 11, 'https://www.sachbaokhang.vn/uploads/files/2023/05/01/van-1.jpg')");
+
+        db.execSQL("INSERT INTO books (title, author, category, description, price, stock, image) VALUES " +
+                "('C++ Nâng cao', 'Đặng Văn Long', 'Lập trình', 'Chuyên sâu C++ và lập trình hệ thống', 260000, 9, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQD3se4ZhISuAB2hLTBG6PuZWd1yza9rLxdAA&s')");
+
+        db.execSQL("INSERT INTO books (title, author, category, description, price, stock, image) VALUES " +
+                "('Blockchain & Crypto', 'Võ Thanh Tùng', 'Blockchain', 'Công nghệ Blockchain và ứng dụng thực tế', 390000, 5, 'https://ischool.vn/wp-content/uploads/2022/12/nhung-cuon-sach-cho-tre-10-tuoi-1.jpg')");
+
+        // ========================================
+        // THÊM CART MẶC ĐỊNH
+        // ========================================
+        // Giỏ hàng cho user_id=2 (user 'user')
         db.execSQL("INSERT INTO cart (user_id, book_id, quantity) VALUES (2, 1, 2)");
-        db.execSQL("INSERT INTO cart (user_id, book_id, quantity) VALUES (2, 2, 1)");
-        db.execSQL("INSERT INTO cart (user_id, book_id, quantity) VALUES (3, 2, 3)");
+        db.execSQL("INSERT INTO cart (user_id, book_id, quantity) VALUES (2, 3, 1)");
+        db.execSQL("INSERT INTO cart (user_id, book_id, quantity) VALUES (2, 5, 3)");
+        db.execSQL("INSERT INTO cart (user_id, book_id, quantity) VALUES (2, 8, 1)");
+
+        // Giỏ hàng cho user_id=3 (user 'user2')
+        db.execSQL("INSERT INTO cart (user_id, book_id, quantity) VALUES (3, 2, 1)");
+        db.execSQL("INSERT INTO cart (user_id, book_id, quantity) VALUES (3, 4, 2)");
+        db.execSQL("INSERT INTO cart (user_id, book_id, quantity) VALUES (3, 7, 1)");
+
+        // ========================================
+        // THÊM ORDERS MẶC ĐỊNH
+        // ========================================
+        db.execSQL("INSERT INTO orders (user_id, order_date, total_amount, status) VALUES (2, '2025-11-01', 580000, 'Pending')");
+        db.execSQL("INSERT INTO orders (user_id, order_date, total_amount, status) VALUES (2, '2025-10-15', 450000, 'Completed')");
+        db.execSQL("INSERT INTO orders (user_id, order_date, total_amount, status) VALUES (3, '2025-11-05', 320000, 'Shipped')");
+
+        // ========================================
+        // THÊM ORDER ITEMS MẶC ĐỊNH
+        // ========================================
+        db.execSQL("INSERT INTO order_items (order_id, book_id, quantity, price) VALUES (1, 1, 2, 250000)");
+        db.execSQL("INSERT INTO order_items (order_id, book_id, quantity, price) VALUES (1, 2, 1, 180000)");
+        db.execSQL("INSERT INTO order_items (order_id, book_id, quantity, price) VALUES (2, 5, 1, 280000)");
+        db.execSQL("INSERT INTO order_items (order_id, book_id, quantity, price) VALUES (2, 3, 1, 150000)");
+        db.execSQL("INSERT INTO order_items (order_id, book_id, quantity, price) VALUES (3, 6, 1, 320000)");
     }
 
     @Override

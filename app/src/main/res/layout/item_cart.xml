@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="4dp"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="2dp"
+    android:background="@android:color/white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="12dp"
+        android:gravity="center_vertical">
+
+        <!-- Checkbox -->
+        <CheckBox
+            android:id="@+id/cbSelect"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp" />
+
+        <!-- Ảnh sách -->
+        <ImageView
+            android:id="@+id/ivBookImage"
+            android:layout_width="80dp"
+            android:layout_height="100dp"
+            android:scaleType="centerCrop"
+            android:background="#F0F0F0" />
+
+        <!-- Thông tin sách -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:layout_marginStart="12dp">
+
+            <!-- Tên sách -->
+            <TextView
+                android:id="@+id/tvBookTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Book Title"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:textColor="#212121"
+                android:maxLines="2"
+                android:ellipsize="end" />
+
+            <!-- Cảnh báo kho -->
+            <TextView
+                android:id="@+id/tvStock"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Kho chỉ còn 5 cuốn"
+                android:textSize="12sp"
+                android:textColor="#FF5722"
+                android:layout_marginTop="4dp"
+                android:visibility="gone" />
+
+            <!-- Giá -->
+            <TextView
+                android:id="@+id/tvBookPrice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="150,000 đ"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#FF6D00"
+                android:layout_marginTop="8dp" />
+
+            <!-- Quantity Controls -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="8dp"
+                android:gravity="center_vertical">
+
+                <!-- Nút giảm -->
+                <ImageButton
+                    android:id="@+id/btnDecrease"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:src="@android:drawable/ic_delete"
+                    android:background="@drawable/quantity_button_bg"
+                    android:scaleType="centerInside"
+                    android:tint="#757575" />
+
+                <!-- Số lượng -->
+                <TextView
+                    android:id="@+id/tvQuantity"
+                    android:layout_width="50dp"
+                    android:layout_height="32dp"
+                    android:text="1"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="#212121"
+                    android:gravity="center"
+                    android:background="@drawable/quantity_display_bg"
+                    android:layout_marginStart="2dp"
+                    android:layout_marginEnd="2dp" />
+
+                <!-- Nút tăng -->
+                <ImageButton
+                    android:id="@+id/btnIncrease"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:src="@android:drawable/ic_input_add"
+                    android:background="@drawable/quantity_button_bg"
+                    android:scaleType="centerInside"
+                    android:tint="#757575" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- Nút xóa -->
+        <ImageButton
+            android:id="@+id/btnDelete"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@android:drawable/ic_menu_delete"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:tint="#9E9E9E"
+            android:layout_marginStart="8dp" />
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

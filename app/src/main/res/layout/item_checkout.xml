@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="12dp"
+    android:background="@android:color/white">
+
+    <!-- Ảnh sách -->
+    <ImageView
+        android:id="@+id/ivBookImage"
+        android:layout_width="60dp"
+        android:layout_height="80dp"
+        android:scaleType="centerCrop"
+        android:background="#F0F0F0" />
+
+    <!-- Thông tin sách -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:layout_marginStart="12dp">
+
+        <!-- Tên sách -->
+        <TextView
+            android:id="@+id/tvBookTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Book Title"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="#212121"
+            android:maxLines="2"
+            android:ellipsize="end" />
+
+        <!-- Giá -->
+        <TextView
+            android:id="@+id/tvBookPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="150,000 đ"
+            android:textSize="13sp"
+            android:textColor="#616161"
+            android:layout_marginTop="4dp" />
+
+        <!-- Số lượng và tổng -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginTop="8dp">
+
+            <TextView
+                android:id="@+id/tvQuantity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="x1"
+                android:textSize="13sp"
+                android:textColor="#757575" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1" />
+
+            <TextView
+                android:id="@+id/tvItemTotal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="150,000 đ"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="#FF6D00" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

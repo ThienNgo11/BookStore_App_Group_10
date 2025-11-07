@@ -1,5 +1,6 @@
 package com.example.bookapp.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -189,9 +190,11 @@ public class SearchResultsActivity extends AppCompatActivity {
             layoutNoResults.setVisibility(View.GONE); // Ẩn layout thông báo
 
             rvSearchResults.setLayoutManager(new GridLayoutManager(this, 2));
-            adapter = new BookAdapter(this, books, book ->
-                    Toast.makeText(this, "Xem chi tiết: " + book.getTitle(), Toast.LENGTH_SHORT).show()
-            );
+            adapter = new BookAdapter(this, books, book -> {
+                Intent intent = new Intent(SearchResultsActivity.this, BookDetailActivity.class);
+                intent.putExtra("BOOK_ID", book.getId());
+                startActivity(intent);
+            });
             rvSearchResults.setAdapter(adapter);
         }
     }

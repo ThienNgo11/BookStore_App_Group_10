@@ -27,5 +27,8 @@
     <color name="status_completed">#2196F3</color>
     <color name="status_shipped">#9C27B0</color>
     <color name="status_default">#9E9E9E</color>
+    <color name="colorPrimary">#FF6200EE</color>
+    <color name="colorPrimaryDark">#FF3700B3</color>
+    <color name="colorAccent">#FF03DAC5</color>
 
 </resources>
