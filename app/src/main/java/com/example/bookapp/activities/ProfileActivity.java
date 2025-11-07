@@ -17,6 +17,7 @@ import androidx.appcompat.widget.Toolbar;
 import com.example.bookapp.R;
 import com.example.bookapp.database.UserDAO;
 import com.example.bookapp.models.User;
+import com.example.bookapp.utils.SecurityUtils;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class ProfileActivity extends AppCompatActivity {
@@ -170,38 +171,57 @@ public class ProfileActivity extends AppCompatActivity {
     private void showChangePasswordDialog() {
         Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.dialog_change_password);
-        dialog.setTitle("Đổi mật khẩu");
 
-        EditText etOld = dialog.findViewById(R.id.etOldPassword);
-        EditText etNew = dialog.findViewById(R.id.etNewPassword);
-        EditText etConfirm = dialog.findViewById(R.id.etConfirmPassword);
+        EditText etOldPassword = dialog.findViewById(R.id.etOldPassword);
+        EditText etNewPassword = dialog.findViewById(R.id.etNewPassword);
+        EditText etConfirmPassword = dialog.findViewById(R.id.etConfirmPassword);
         Button btnSave = dialog.findViewById(R.id.btnSave);
         Button btnCancel = dialog.findViewById(R.id.btnCancel);
 
         btnSave.setOnClickListener(v -> {
-            String oldPass = etOld.getText().toString();
-            String newPass = etNew.getText().toString();
-            String confirm = etConfirm.getText().toString();
+            String oldPass = etOldPassword.getText().toString().trim();
+            String newPass = etNewPassword.getText().toString().trim();
+            String confirmPass = etConfirmPassword.getText().toString().trim();
 
-            if (oldPass.isEmpty() || newPass.isEmpty() || confirm.isEmpty()) {
+            // 1. Kiểm tra rỗng
+            if (oldPass.isEmpty() || newPass.isEmpty() || confirmPass.isEmpty()) {
                 Toast.makeText(this, "Vui lòng nhập đầy đủ", Toast.LENGTH_SHORT).show();
                 return;
             }
-            if (!oldPass.equals(currentUser.getPassword())) {
-                Toast.makeText(this, "Mật khẩu cũ sai", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            if (!newPass.equals(confirm)) {
-                Toast.makeText(this, "Mật khẩu không khớp", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            if (newPass.length() < 6) {
-                Toast.makeText(this, "Mật khẩu ≥ 6 ký tự", Toast.LENGTH_SHORT).show();
+
+            // 2. BĂM MẬT KHẨU CŨ → SO SÁNH VỚI DB (dùng cùng hàm như login)
+            String hashedOld = SecurityUtils.hashPassword(oldPass);
+            if (hashedOld == null || !hashedOld.equals(currentUser.getPassword())) {
+                Toast.makeText(this, "Mật khẩu cũ không đúng", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            userDAO.updateUserPassword(currentUser.getId(), newPass);
-            Toast.makeText(this, "Đổi mật khẩu thành công", Toast.LENGTH_SHORT).show();
+            // 3. Kiểm tra xác nhận
+            if (!newPass.equals(confirmPass)) {
+                Toast.makeText(this, "Mật khẩu xác nhận không khớp", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // 4. Kiểm tra độ dài
+            if (newPass.length() < 6) {
+                Toast.makeText(this, "Mật khẩu phải từ 6 ký tự trở lên", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // 5. BĂM MẬT KHẨU MỚI → LƯU VÀO DB (dùng cùng hàm như register)
+            String hashedNew = SecurityUtils.hashPassword(newPass);
+            if (hashedNew == null) {
+                Toast.makeText(this, "Lỗi hệ thống (mã hóa)", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // 6. LƯU VÀO DB → DÙNG CÙNG HÀM NHƯ REGISTER
+            userDAO.updateUserPassword(currentUser.getId(), hashedNew);
+
+            // 7. Cập nhật local để lần sau so sánh đúng
+            currentUser.setPassword(hashedNew);
+
+            Toast.makeText(this, "Đổi mật khẩu thành công!", Toast.LENGTH_LONG).show();
             dialog.dismiss();
         });
 

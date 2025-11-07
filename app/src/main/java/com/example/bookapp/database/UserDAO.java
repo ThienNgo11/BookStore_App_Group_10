@@ -113,13 +113,13 @@ public class UserDAO {
         return user;
     }
 
-    public void updateUserPassword(int userId, String newPassword) {
+    public void updateUserPassword(int userId, String hashedPassword) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put("password", newPassword);
+        values.put("password", hashedPassword); // Lưu chuỗi Hex 64 ký tự
         db.update("users", values, "id = ?", new String[]{String.valueOf(userId)});
+        db.close();
     }
-
     public void updateUserInfo(User user) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();

@@ -8,15 +8,25 @@
     android:gravity="center"
     android:background="@color/white">
 
-    <!-- Logo/Header -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Book Store"
-        android:textSize="28sp"
-        android:textStyle="bold"
-        android:textColor="@color/black"
-        android:layout_marginBottom="50dp" />
+    <ImageView
+        android:id="@+id/imgLogo"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:src="@drawable/logo"
+        android:layout_marginBottom="50dp"
+        android:contentDescription="Logo cửa hàng"
+        android:adjustViewBounds="true"
+        android:scaleType="fitCenter" />
+
+<!--    &lt;!&ndash; Logo/Header &ndash;&gt;-->
+<!--    <TextView-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="Book Store"-->
+<!--        android:textSize="28sp"-->
+<!--        android:textStyle="bold"-->
+<!--        android:textColor="@color/black"-->
+<!--        android:layout_marginBottom="50dp" />-->
 
     <!-- Username Input -->
     <com.google.android.material.textfield.TextInputLayout
