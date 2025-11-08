@@ -19,6 +19,7 @@ import com.example.bookapp.R;
 import com.example.bookapp.adapters.UserAdapter;
 import com.example.bookapp.database.UserDAO;
 import com.example.bookapp.models.User;
+import com.example.bookapp.utils.SecurityUtils;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -251,7 +252,9 @@ public class UsersManagementActivity extends AppCompatActivity {
             EditText etUsername = dialog.findViewById(R.id.etUsername);
             etUsername.setText(user.getUsername());
             EditText etPassword = dialog.findViewById(R.id.etPassword);
-            etPassword.setText(user.getPassword());
+            // Không hiển thị mật khẩu đã mã hóa, để trống hoặc hiển thị placeholder
+            etPassword.setText("");
+            etPassword.setHint("Để trống nếu không đổi mật khẩu");
             EditText etFullname = dialog.findViewById(R.id.etFullname);
             etFullname.setText(user.getFullname());
             EditText etEmail = dialog.findViewById(R.id.etEmail);
@@ -272,13 +275,24 @@ public class UsersManagementActivity extends AppCompatActivity {
                         etUsername.setError("Username đã tồn tại");
                         return;
                     }
+
                     user.setUsername(newUsername);
-                    user.setPassword(etPassword.getText().toString());
+
+                    // Chỉ cập nhật mật khẩu nếu người dùng nhập mật khẩu mới
+                    String newPassword = etPassword.getText().toString();
+                    if (!newPassword.isEmpty()) {
+                        // Mã hóa mật khẩu mới
+                        String hashedPassword = SecurityUtils.hashPassword(newPassword);
+                        user.setPassword(hashedPassword);
+                    }
+                    // Nếu để trống thì giữ nguyên mật khẩu cũ
+
                     user.setFullname(etFullname.getText().toString());
                     user.setEmail(etEmail.getText().toString());
                     user.setPhone(etPhone.getText().toString());
                     user.setAddress(etAddress.getText().toString());
                     user.setRole(etRole.getText().toString());
+
                     userDAO.updateUser(user);
                     Toast.makeText(this, "Sửa user thành công", Toast.LENGTH_SHORT).show();
                     loadUsers();
