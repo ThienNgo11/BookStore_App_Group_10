@@ -1,6 +1,7 @@
 package com.example.bookapp.activities;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -16,8 +17,11 @@ import com.example.bookapp.R;
 import com.example.bookapp.adapters.UserOrderAdapter;
 import com.example.bookapp.adapters.OrderItemAdapter;
 import com.example.bookapp.database.OrderDAO;
+import com.example.bookapp.database.CartDAO;
+import com.example.bookapp.database.BookDAO;
 import com.example.bookapp.models.Order;
 import com.example.bookapp.models.OrderItem;
+import com.example.bookapp.models.Book;
 import com.example.bookapp.utils.SessionManager;
 import com.google.android.material.tabs.TabLayout;
 
@@ -40,7 +44,6 @@ public class UserOrdersActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_orders);
 
-        // SỬ DỤNG SESSION MANAGER GIỐNG NHƯ CART ACTIVITY
         sessionManager = new SessionManager(this);
         currentUserId = sessionManager.getUserId();
 
@@ -124,8 +127,7 @@ public class UserOrdersActivity extends AppCompatActivity {
 
             @Override
             public void onReorder(Order order) {
-                // TODO: Implement reorder functionality
-                Toast.makeText(UserOrdersActivity.this, "Tính năng đang phát triển", Toast.LENGTH_SHORT).show();
+                showReorderConfirmDialog(order);
             }
         });
         rvOrders.setAdapter(adapter);
@@ -135,7 +137,6 @@ public class UserOrdersActivity extends AppCompatActivity {
         orderList.clear();
         fullOrderList.clear();
 
-        // SỬA LẠI: Sử dụng phương thức getUserOrders thay vì getAllOrders
         List<Order> userOrders = orderDAO.getUserOrders(currentUserId);
 
         if ("All".equals(status)) {
@@ -151,7 +152,6 @@ public class UserOrdersActivity extends AppCompatActivity {
         fullOrderList.addAll(orderList);
         adapter.notifyDataSetChanged();
 
-        // Hiển thị thông báo nếu không có đơn hàng
         if (orderList.isEmpty()) {
             tvEmptyOrders.setVisibility(View.VISIBLE);
             rvOrders.setVisibility(View.GONE);
@@ -193,7 +193,6 @@ public class UserOrdersActivity extends AppCompatActivity {
             rvOrderItems.setLayoutManager(new LinearLayoutManager(this));
             rvOrderItems.setAdapter(orderItemAdapter);
 
-            // Hiển thị nút hủy đơn chỉ khi đơn hàng đang chờ xác nhận
             if ("Pending".equals(fullOrder.getStatus())) {
                 btnCancelOrder.setVisibility(View.VISIBLE);
                 btnCancelOrder.setOnClickListener(v -> {
@@ -227,6 +226,96 @@ public class UserOrdersActivity extends AppCompatActivity {
                 })
                 .setNegativeButton("Đóng", null)
                 .show();
+    }
+
+    // ========================================
+    // CHỨC NĂNG MUA LẠI
+    // ========================================
+
+    private void showReorderConfirmDialog(Order order) {
+        List<OrderItem> orderItems = orderDAO.getOrderItems(order.getId());
+
+        if (orderItems.isEmpty()) {
+            Toast.makeText(this, "Đơn hàng không có sản phẩm", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        StringBuilder message = new StringBuilder();
+        message.append("Thêm lại các sản phẩm sau vào giỏ hàng:\n\n");
+
+        for (OrderItem item : orderItems) {
+            message.append("• ").append(item.getBookTitle())
+                    .append(" (x").append(item.getQuantity()).append(")\n");
+        }
+
+        message.append("\nBạn có muốn tiếp tục?");
+
+        new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle("Mua lại đơn hàng #" + order.getId())
+                .setMessage(message.toString())
+                .setPositiveButton("Thêm vào giỏ", (dialog, which) -> {
+                    executeReorder(orderItems);
+                })
+                .setNegativeButton("Hủy", null)
+                .show();
+    }
+
+    private void executeReorder(List<OrderItem> orderItems) {
+        CartDAO cartDAO = new CartDAO(this);
+        BookDAO bookDAO = new BookDAO(this);
+
+        int successCount = 0;
+        int outOfStockCount = 0;
+        List<String> outOfStockBooks = new ArrayList<>();
+
+        for (OrderItem item : orderItems) {
+            Book book = bookDAO.getBookById(item.getBookId());
+
+            if (book == null) {
+                continue;
+            }
+
+            if (book.getStock() <= 0) {
+                outOfStockCount++;
+                outOfStockBooks.add(book.getTitle());
+                continue;
+            }
+
+            int quantityToAdd = Math.min(item.getQuantity(), book.getStock());
+
+            boolean success = cartDAO.addToCart(currentUserId, item.getBookId(), quantityToAdd);
+
+            if (success) {
+                successCount++;
+            }
+        }
+
+        showReorderResult(successCount, outOfStockCount, outOfStockBooks);
+    }
+
+    private void showReorderResult(int successCount, int outOfStockCount, List<String> outOfStockBooks) {
+        if (successCount > 0) {
+            String message = "Đã thêm " + successCount + " sản phẩm vào giỏ hàng";
+
+            if (outOfStockCount > 0) {
+                message += "\n\n" + outOfStockCount + " sản phẩm hết hàng:\n";
+                for (String bookTitle : outOfStockBooks) {
+                    message += "• " + bookTitle + "\n";
+                }
+            }
+
+            new androidx.appcompat.app.AlertDialog.Builder(this)
+                    .setTitle("Mua lại thành công")
+                    .setMessage(message)
+                    .setPositiveButton("Xem giỏ hàng", (dialog, which) -> {
+                        Intent intent = new Intent(UserOrdersActivity.this, CartActivity.class);
+                        startActivity(intent);
+                    })
+                    .setNegativeButton("Tiếp tục mua", null)
+                    .show();
+        } else {
+            Toast.makeText(this, "Không thể thêm sản phẩm vào giỏ hàng", Toast.LENGTH_LONG).show();
+        }
     }
 
     private String getStatusText(String status) {
