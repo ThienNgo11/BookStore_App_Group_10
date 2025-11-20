@@ -359,16 +359,17 @@
 
         </LinearLayout>
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnPlaceOrder"
             android:layout_width="wrap_content"
             android:layout_height="48dp"
-            android:text="Đặt hàng"
+            android:text="Mua hàng"
             android:textColor="@android:color/white"
             android:textStyle="bold"
-            android:background="@drawable/button_checkout"
-            android:paddingStart="32dp"
-            android:paddingEnd="32dp" />
+            app:backgroundTint="#FF5722"
+            app:cornerRadius="8dp"
+            android:paddingStart="24dp"
+            android:paddingEnd="24dp" />
 
     </LinearLayout>
 

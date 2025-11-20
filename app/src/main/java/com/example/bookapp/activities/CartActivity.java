@@ -61,10 +61,7 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-                Intent intent = new Intent(CartActivity.this, MainActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                startActivity(intent);
-                finish();
+                goBackToMainActivity();
             }
         });
         cartDAO = new CartDAO(this);
@@ -131,25 +128,26 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
             getSupportActionBar().setTitle("Giỏ hàng");
         }
 
-        // SỬA LẠI: Gọi phương thức quay về MainActivity
+        // SỬA LẠI: Sử dụng finish() thay vì tạo intent mới
         toolbar.setNavigationOnClickListener(v -> {
-            goBackToMainActivity();
+            finish();
         });
     }
 
-    // PHƯƠNG THỨC MỚI: Luôn quay về MainActivity an toàn
+    // PHƯƠNG THỨC MỚI: Quay về MainActivity đúng cách
     private void goBackToMainActivity() {
-        // Kiểm tra xem MainActivity có đang chạy trong stack không
+        // Kiểm tra xem MainActivity có đang tồn tại trong stack không
         Intent intent = new Intent(this, MainActivity.class);
 
-        // Sử dụng flags để đảm bảo MainActivity được đưa lên top
+        // Sử dụng flags để resume MainActivity thay vì tạo mới
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        startActivity(intent);
 
-        // Kết thúc CartActivity
+        // Thêm extra để MainActivity biết chọn tab nào
+        intent.putExtra("SELECTED_TAB", R.id.nav_home);
+
+        startActivity(intent);
         finish();
     }
-
 
     private void setupRecyclerView() {
         rvCart.setLayoutManager(new LinearLayoutManager(this));

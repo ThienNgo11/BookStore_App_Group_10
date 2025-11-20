@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
     private List<Book> fullBookList = new ArrayList<>();
     private BookDAO bookDAO;
     private SessionManager sessionManager;
+    private BottomNavigationView bottomNavigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,15 +40,46 @@ public class MainActivity extends AppCompatActivity {
         bookDAO = new BookDAO(this);
         sessionManager = new SessionManager(this);
 
-        rvBooks = findViewById(R.id.rvBooks);
-        rvBooks.setLayoutManager(new GridLayoutManager(this, 2));
-
-        int spacingInPixels = getResources().getDimensionPixelSize(R.dimen.grid_spacing);
-        rvBooks.addItemDecoration(new GridSpacingItemDecoration(2, spacingInPixels, true));
-
+        initViews();
+        setupRecyclerView();
         setupAdapter();
         loadBooks();
+        setupSearch();
+        setupNavigation();
 
+        // Xử lý selected tab từ intent
+        handleSelectedTabFromIntent();
+
+        String username = sessionManager.getUsername();
+        if (username != null) {
+            Toast.makeText(this, "Chào mừng: " + username, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void initViews() {
+        rvBooks = findViewById(R.id.rvBooks);
+        bottomNavigationView = findViewById(R.id.bottomNavigation);
+    }
+
+    private void setupRecyclerView() {
+        rvBooks.setLayoutManager(new GridLayoutManager(this, 2));
+        int spacingInPixels = getResources().getDimensionPixelSize(R.dimen.grid_spacing);
+        rvBooks.addItemDecoration(new GridSpacingItemDecoration(2, spacingInPixels, true));
+    }
+
+    private void setupAdapter() {
+        adapter = new BookAdapter(this, bookList, new BookAdapter.OnBookClickListener() {
+            @Override
+            public void onBookClick(Book book) {
+                Intent intent = new Intent(MainActivity.this, BookDetailActivity.class);
+                intent.putExtra("BOOK_ID", book.getId());
+                startActivity(intent);
+            }
+        });
+        rvBooks.setAdapter(adapter);
+    }
+
+    private void setupSearch() {
         SearchView searchView = findViewById(R.id.searchView);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -66,18 +98,15 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
+    }
 
-        String username = sessionManager.getUsername();
-        if (username != null) {
-            Toast.makeText(this, "Chào mừng: " + username, Toast.LENGTH_SHORT).show();
-        }
-
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigation);
+    private void setupNavigation() {
         bottomNavigationView.setOnItemSelectedListener(new BottomNavigationView.OnItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 int itemId = item.getItemId();
                 if (itemId == R.id.nav_home) {
+                    // Đã ở trang home, chỉ cần load lại sách
                     loadBooks();
                     return true;
                 } else if (itemId == R.id.nav_cart) {
@@ -98,16 +127,34 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void setupAdapter() {
-        adapter = new BookAdapter(this, bookList, new BookAdapter.OnBookClickListener() {
-            @Override
-            public void onBookClick(Book book) {
-                Intent intent = new Intent(MainActivity.this, BookDetailActivity.class);
-                intent.putExtra("BOOK_ID", book.getId());
-                startActivity(intent);
-            }
-        });
-        rvBooks.setAdapter(adapter);
+    private void handleSelectedTabFromIntent() {
+        Intent intent = getIntent();
+        if (intent != null && intent.hasExtra("SELECTED_TAB")) {
+            int selectedTab = intent.getIntExtra("SELECTED_TAB", R.id.nav_home);
+            bottomNavigationView.setSelectedItemId(selectedTab);
+
+            // Clear extra để lần sau không bị ảnh hưởng
+            getIntent().removeExtra("SELECTED_TAB");
+        } else {
+            // Mặc định chọn tab Home
+            bottomNavigationView.setSelectedItemId(R.id.nav_home);
+        }
+    }
+
+    // Override onNewIntent để xử lý khi activity được resume
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        handleSelectedTabFromIntent();
+    }
+
+    // Xử lý khi quay lại MainActivity từ các activity khác
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Đảm bảo tab Home luôn được chọn khi quay lại
+        bottomNavigationView.setSelectedItemId(R.id.nav_home);
     }
 
     private void loadBooks() {

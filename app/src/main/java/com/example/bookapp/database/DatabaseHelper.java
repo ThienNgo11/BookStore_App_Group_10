@@ -83,50 +83,54 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         // ========================================
         // THÊM BOOKS MẶC ĐỊNH (15 CUỐN)
         // ========================================
+        // ========================================
+// THÊM BOOKS MẶC ĐỊNH (15 CUỐN) – SÁCH NỔI TIẾNG VIỆT NAM
+// ========================================
         db.execSQL("INSERT INTO books (title, author, category, description, price, stock, image) VALUES " +
-                "('Lập trình Android từ A-Z', 'Nguyễn Văn An', 'Công nghệ', 'Cuốn sách hướng dẫn chi tiết về lập trình Android cho người mới bắt đầu', 250000, 20, 'https://www.sachbaokhang.vn/uploads/files/2023/05/01/van-1.jpg')");
+                "('Dám Bị Ghét', 'Koga Fumitake', 'Tâm lý', 'Cuốn sách giúp thay đổi tư duy và sống tự do hơn.', 89000, 20, 'https://thuvienninhthuan.vn/Upload/2021/12/22/Dam%20bi%20ghet.jpg_2021Thg1222_034414130(1).jpg')");
 
         db.execSQL("INSERT INTO books (title, author, category, description, price, stock, image) VALUES " +
-                "('Java Căn bản', 'Trần Minh Tuấn', 'Lập trình', 'Học Java từ cơ bản đến nâng cao với nhiều ví dụ thực tế', 180000, 15, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQD3se4ZhISuAB2hLTBG6PuZWd1yza9rLxdAA&s')");
+                "('Nhà Giả Kim', 'Paulo Coelho', 'Văn học', 'Hành trình tìm kiếm ước mơ của chàng chăn cừu Santiago.', 99000, 15, 'https://tusachnuocman.com/wp-content/uploads/2023/12/Bia-cuon-sach-nha-gia-kim.jpg')");
 
         db.execSQL("INSERT INTO books (title, author, category, description, price, stock, image) VALUES " +
-                "('SQL cho người mới bắt đầu', 'Lê Hoàng Nam', 'Cơ sở dữ liệu', 'Tìm hiểu SQL và quản lý database một cách dễ dàng', 150000, 25, 'https://ischool.vn/wp-content/uploads/2022/12/nhung-cuon-sach-cho-tre-10-tuoi-1.jpg')");
+                "('Tuổi Trẻ Đáng Giá Bao Nhiêu', 'Rosie Nguyễn', 'Kỹ năng sống', 'Gợi mở cách sống có mục tiêu và định hướng.', 105000, 25, 'https://cdn1.fahasa.com/media/catalog/product/i/m/image_239651.jpg')");
 
         db.execSQL("INSERT INTO books (title, author, category, description, price, stock, image) VALUES " +
-                "('Python cơ bản', 'Phạm Văn Bình', 'Lập trình', 'Khóa học Python từ zero đến hero', 200000, 18, 'https://www.sachbaokhang.vn/uploads/files/2023/05/01/van-1.jpg')");
+                "('Đắc Nhân Tâm', 'Dale Carnegie', 'Tâm lý – kỹ năng', 'Cuốn sách kinh điển về nghệ thuật giao tiếp.', 120000, 18, 'https://tiki.vn/blog/wp-content/uploads/2023/08/phan-4-dac-nhan-tam-1024x1024.jpg')");
 
         db.execSQL("INSERT INTO books (title, author, category, description, price, stock, image) VALUES " +
-                "('Web Development 2024', 'Đỗ Thị Mai', 'Web', 'Học làm web với HTML, CSS, JavaScript hiện đại', 280000, 12, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQD3se4ZhISuAB2hLTBG6PuZWd1yza9rLxdAA&s')");
+                "('Muôn Kiếp Nhân Sinh', 'Nguyên Phong', 'Tâm linh', 'Giải thích luật nhân quả và bài học từ nhiều kiếp sống.', 150000, 12, 'https://pos.nvncdn.com/fd5775-40602/ps/20240508_aPnKpELWEt.png?v=1715157206')");
 
         db.execSQL("INSERT INTO books (title, author, category, description, price, stock, image) VALUES " +
-                "('React Native Thực chiến', 'Hoàng Văn Dũng', 'Mobile', 'Xây dựng ứng dụng di động với React Native', 320000, 10, 'https://ischool.vn/wp-content/uploads/2022/12/nhung-cuon-sach-cho-tre-10-tuoi-1.jpg')");
+                "('Trí Tuệ Do Thái', 'Erik H. Erikson', 'Giáo dục – văn hóa', 'Khám phá bí quyết thành công của người Do Thái.', 180000, 10, 'https://pos.nvncdn.com/fd5775-40602/ps/20241120_qheOYNfxFq.png?v=1732086050')");
 
         db.execSQL("INSERT INTO books (title, author, category, description, price, stock, image) VALUES " +
-                "('Machine Learning cơ bản', 'Vũ Đức Thắng', 'AI', 'Nhập môn Machine Learning và Deep Learning', 350000, 8, 'https://www.sachbaokhang.vn/uploads/files/2023/05/01/van-1.jpg')");
+                "('Think And Grow Rich – 13 Nguyên Tắc Nghĩ Giàu Làm Giàu', 'Napoleon Hill', 'Kinh doanh – phát triển bản thân', 'Cẩm nang giúp thay đổi tư duy tài chính.', 140000, 15, 'https://pos.nvncdn.com/fd5775-40602/ps/20240507_sM636ASt69.png')");
 
         db.execSQL("INSERT INTO books (title, author, category, description, price, stock, image) VALUES " +
-                "('Clean Code', 'Robert C. Martin', 'Kỹ thuật', 'Nghệ thuật viết code sạch và dễ maintain', 380000, 15, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQD3se4ZhISuAB2hLTBG6PuZWd1yza9rLxdAA&s')");
+                "('Tư Duy Nhanh Và Chậm', 'Daniel Kahneman', 'Khoa học – tâm lý', 'Giải thích cách hai hệ thống tư duy chi phối con người.', 180000, 14, 'https://salt.tikicdn.com/cache/w300/ts/product/7f/54/81/29cedc73e248c3bc710166595220a91a.jpg')");
 
         db.execSQL("INSERT INTO books (title, author, category, description, price, stock, image) VALUES " +
-                "('Design Patterns', 'Gang of Four', 'Kỹ thuật', 'Các mẫu thiết kế phần mềm kinh điển', 420000, 6, 'https://ischool.vn/wp-content/uploads/2022/12/nhung-cuon-sach-cho-tre-10-tuoi-1.jpg')");
+                "('Một Đời Quản Trị', 'Howard Schultz', 'Kinh doanh', 'Bài học từ hành trình xây dựng Starbucks.', 165000, 8, 'https://cdn1.fahasa.com/media/catalog/product/8/9/8934974164623.jpg')");
 
         db.execSQL("INSERT INTO books (title, author, category, description, price, stock, image) VALUES " +
-                "('Git & GitHub', 'Nguyễn Hữu Phúc', 'Tools', 'Làm chủ Git và quản lý source code hiệu quả', 120000, 30, 'https://www.sachbaokhang.vn/uploads/files/2023/05/01/van-1.jpg')");
+                "('Chuyện Nghề Marketing', 'Trần Dzĩ Châu', 'Marketing', 'Những câu chuyện và kinh nghiệm marketing thực tế.', 130000, 30, 'https://media.vov.vn/sites/default/files/styles/large/public/2024-05/thanh_kinh_marketing_4.jpg')");
 
         db.execSQL("INSERT INTO books (title, author, category, description, price, stock, image) VALUES " +
-                "('Docker & Kubernetes', 'Lê Minh Hoàng', 'DevOps', 'Container hóa ứng dụng với Docker và K8s', 450000, 7, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQD3se4ZhISuAB2hLTBG6PuZWd1yza9rLxdAA&s')");
+                "('Tôi Thấy Hoa Vàng Trên Cỏ Xanh', 'Nguyễn Nhật Ánh', 'Văn học thiếu nhi', 'Câu chuyện tuổi thơ trong trẻo đầy cảm xúc.', 95000, 20, 'https://media.metaisach.com/2025/05/toi-thay-hoa-vang-tren-co-xanh-ec153f52.jpeg')");
 
         db.execSQL("INSERT INTO books (title, author, category, description, price, stock, image) VALUES " +
-                "('Node.js Backend', 'Trần Quốc Anh', 'Backend', 'Xây dựng API với Node.js và Express', 290000, 14, 'https://ischool.vn/wp-content/uploads/2022/12/nhung-cuon-sach-cho-tre-10-tuoi-1.jpg')");
+                "('Người Bán Hàng Vĩ Đại Nhất Thế Giới', 'Og Mandino', 'Kinh doanh', 'Bộ nguyên tắc sống và thành công vượt thời gian.', 99000, 18, 'https://pos.nvncdn.com/fd5775-40602/ps/20240507_yn8IoyAoXS.png?v=1715068569')");
 
         db.execSQL("INSERT INTO books (title, author, category, description, price, stock, image) VALUES " +
-                "('Flutter cho mọi người', 'Phạm Thị Lan', 'Mobile', 'Phát triển app đa nền tảng với Flutter', 310000, 11, 'https://www.sachbaokhang.vn/uploads/files/2023/05/01/van-1.jpg')");
+                "('Thép Đã Tôi Thế Đấy', 'Nikolai Ostrovsky', 'Văn học', 'Câu chuyện phi thường về nghị lực sống và lý tưởng.', 110000, 11, 'https://nhasachminhthang.vn/UserFiles/files/Vanhocnuocngoai/5125678bb1a9990a3339e59602a2370b.jpg')");
 
         db.execSQL("INSERT INTO books (title, author, category, description, price, stock, image) VALUES " +
-                "('C++ Nâng cao', 'Đặng Văn Long', 'Lập trình', 'Chuyên sâu C++ và lập trình hệ thống', 260000, 9, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQD3se4ZhISuAB2hLTBG6PuZWd1yza9rLxdAA&s')");
+                "('Sapiens: Lược Sử Loài Người', 'Yuval Noah Harari', 'Lịch sử – khoa học', 'Hành trình tiến hóa của nhân loại từ thuở sơ khai.', 199000, 9, 'https://pos.nvncdn.com/fd5775-40602/ps/20210408_3BPrLNJh3UvQBJWG17DkXxVu.png?v=1674520579')");
 
         db.execSQL("INSERT INTO books (title, author, category, description, price, stock, image) VALUES " +
-                "('Blockchain & Crypto', 'Võ Thanh Tùng', 'Blockchain', 'Công nghệ Blockchain và ứng dụng thực tế', 390000, 5, 'https://ischool.vn/wp-content/uploads/2022/12/nhung-cuon-sach-cho-tre-10-tuoi-1.jpg')");
+                "('Cà Phê Cùng Tony', 'Tony Buổi Sáng', 'Kỹ năng sống', 'Bài học sống và tư duy tích cực qua những câu chuyện hài hước.', 115000, 22, 'https://product.hstatic.net/200000612211/product/ca-phe-cung-tony-2_cac0dccf23534a5eadbd63c85c1c9b69_master.jpg')");
+
 
         // ========================================
         // THÊM CART MẶC ĐỊNH

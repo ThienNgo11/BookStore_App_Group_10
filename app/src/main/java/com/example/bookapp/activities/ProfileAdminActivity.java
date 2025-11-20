@@ -31,7 +31,7 @@ public class ProfileAdminActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_profile);
+        setContentView(R.layout.activity_admin_profile);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -77,7 +77,7 @@ public class ProfileAdminActivity extends AppCompatActivity {
         bottomNav.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
 
-            if (id == R.id.nav_home) {
+            if (id == R.id.nav_books) {
                 startActivity(new Intent(this, AdminActivity.class));
                 finish();
                 return true;

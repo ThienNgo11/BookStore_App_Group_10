@@ -13,7 +13,7 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="#FF6D00"
+            android:background="@color/purple_500"
             app:titleTextColor="@android:color/white"
             app:navigationIcon="@android:drawable/ic_menu_revert"
             android:elevation="4dp" />
@@ -169,14 +169,15 @@
 
                 </LinearLayout>
 
-                <Button
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnCheckout"
                     android:layout_width="wrap_content"
                     android:layout_height="48dp"
                     android:text="Mua hàng"
                     android:textColor="@android:color/white"
                     android:textStyle="bold"
-                    android:background="@drawable/button_checkout"
+                    app:backgroundTint="#FF5722"
+                    app:cornerRadius="8dp"
                     android:paddingStart="24dp"
                     android:paddingEnd="24dp" />
 
