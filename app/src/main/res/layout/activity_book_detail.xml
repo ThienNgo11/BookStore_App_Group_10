@@ -219,6 +219,47 @@
                         android:textStyle="bold"
                         android:layout_marginTop="8dp" />
 
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginTop="16dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Số lượng: "
+                            android:textColor="#212121"
+                            android:layout_marginEnd="12dp"/>
+
+                        <ImageButton
+                            android:id="@+id/btnMinus"
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:background="@drawable/button_border"
+                            android:src="@drawable/ic_remove"
+                            app:tint="#757575"
+                            android:padding="8dp"/>
+                        <TextView
+                            android:id="@+id/tvQuantity"
+                            android:layout_width="40dp"
+                            android:layout_height="32dp"
+                            android:gravity="center"
+                            android:text="1"
+                            android:textColor="#212121"
+                            android:textStyle="bold"
+                            android:background="#FAFAFA"/>
+
+                        <ImageButton
+                            android:id="@+id/btnPlus"
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:background="@drawable/button_border"
+                            android:src="@drawable/ic_addd"
+                            app:tint="#757575"
+                            android:padding="8dp"/>
+                    </LinearLayout>
                 </LinearLayout>
 
             </androidx.cardview.widget.CardView>

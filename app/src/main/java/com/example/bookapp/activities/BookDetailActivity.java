@@ -27,6 +27,11 @@ public class BookDetailActivity extends AppCompatActivity {
     private Button btnAddToCart, btnBuyNow;
     private ImageButton btnBack, btnShare, btnFavorite;
 
+    // MỚI: Khai báo các view cho phần số lượng
+    private ImageButton btnMinus, btnPlus;
+    private TextView tvQuantity;
+    private int currentQuantity = 1; // Mặc định là 1
+
     private BookDAO bookDAO;
     private Book book;
     private int bookId;
@@ -71,6 +76,11 @@ public class BookDetailActivity extends AppCompatActivity {
         tvPrice = findViewById(R.id.tvPrice);
         tvStock = findViewById(R.id.tvStock);
         tvDescription = findViewById(R.id.tvDescription);
+
+        // MỚI: Ánh xạ view số lượng
+        btnMinus = findViewById(R.id.btnMinus);
+        btnPlus = findViewById(R.id.btnPlus);
+        tvQuantity = findViewById(R.id.tvQuantity);
 
         btnAddToCart = findViewById(R.id.btnAddToCart);
         btnBuyNow = findViewById(R.id.btnBuyNow);
@@ -131,6 +141,25 @@ public class BookDetailActivity extends AppCompatActivity {
             // TODO: Implement favorite functionality
         });
 
+        // MỚI: Logic nút Giảm (-)
+        btnMinus.setOnClickListener(v -> {
+            if (currentQuantity > 1) {
+                currentQuantity--;
+                tvQuantity.setText(String.valueOf(currentQuantity));
+            }
+        });
+
+        // MỚI: Logic nút Tăng (+)
+        btnPlus.setOnClickListener(v -> {
+            // Kiểm tra xem có vượt quá tồn kho không
+            if (book != null && currentQuantity < book.getStock()) {
+                currentQuantity++;
+                tvQuantity.setText(String.valueOf(currentQuantity));
+            } else {
+                Toast.makeText(this, "Đã đạt giới hạn tồn kho", Toast.LENGTH_SHORT).show();
+            }
+        });
+
         btnAddToCart.setOnClickListener(v -> {
 
             int userId = sessionManager.getUserId();
@@ -148,16 +177,23 @@ public class BookDetailActivity extends AppCompatActivity {
             CartItem existing = cartDAO.getCartItem(userId, book.getId());
 
             if (existing != null) {
-                if (existing.getQuantity() + 1 > book.getStock()) {
-                    Toast.makeText(this, "Không đủ hàng trong kho", Toast.LENGTH_SHORT).show();
+                // Tính tổng số lượng mới = số lượng đang có trong giỏ + số lượng muốn thêm
+                int newTotalQuantity = existing.getQuantity() + currentQuantity;
+
+                // Kiểm tra xem tổng số lượng có vượt quá kho không
+                if (newTotalQuantity > book.getStock()) {
+                    Toast.makeText(this, "Tổng số lượng (" + newTotalQuantity + ") vượt quá tồn kho", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                cartDAO.updateQuantity(existing.getId(), existing.getQuantity() + 1);
-                Toast.makeText(this, "Đã tăng số lượng trong giỏ", Toast.LENGTH_SHORT).show();
+                // SỬA: Dùng newTotalQuantity thay vì (existing.getQuantity() + 1)
+                cartDAO.updateQuantity(existing.getId(), newTotalQuantity);
+                Toast.makeText(this, "Đã thêm " + currentQuantity + " cuốn vào giỏ", Toast.LENGTH_SHORT).show();
             } else {
-                boolean ok = cartDAO.addToCart(userId, book.getId(), 1);
-                if (ok) Toast.makeText(this, "Đã thêm vào giỏ hàng", Toast.LENGTH_SHORT).show();
+                // SỬA: Dùng currentQuantity thay vì số 1 cứng
+                boolean ok = cartDAO.addToCart(userId, book.getId(), currentQuantity);
+
+                if (ok) Toast.makeText(this, "Đã thêm " + currentQuantity + " cuốn vào giỏ", Toast.LENGTH_SHORT).show();
                 else Toast.makeText(this, "Lỗi khi thêm giỏ hàng", Toast.LENGTH_SHORT).show();
             }
         });
@@ -188,7 +224,7 @@ public class BookDetailActivity extends AppCompatActivity {
                     book.getTitle(),
                     book.getImage(),
                     book.getPrice(),
-                    1,                 // Mua ngay = 1
+                    currentQuantity,// Mua ngay = 1
                     book.getStock()
             );
 
