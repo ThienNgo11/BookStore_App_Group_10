@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 // MỚI: Thêm import cho SearchView
@@ -41,6 +42,7 @@ public class SearchResultsActivity extends AppCompatActivity {
 
     // MỚI: Thêm SearchView
     private SearchView searchView;
+    private ImageView ivBack;
 
     // Các biến để lưu trữ trạng thái lọc hiện tại
     private String currentCategory = "Tất cả";
@@ -65,6 +67,12 @@ public class SearchResultsActivity extends AppCompatActivity {
 
         // MỚI: Ánh xạ SearchView
         searchView = findViewById(R.id.searchViewResults);
+        ivBack = findViewById(R.id.ivBack);
+
+        ivBack.setOnClickListener(v -> {
+            // Kết thúc activity hiện tại để quay lại màn hình trước
+            finish();
+        });
 
         bookDAO = new BookDAO(this);
         query = getIntent().getStringExtra("SEARCH_QUERY");
