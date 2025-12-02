@@ -53,6 +53,7 @@ public class GuestActivity extends AppCompatActivity {
                 if (query != null && !query.trim().isEmpty()) {
                     Intent intent = new Intent(GuestActivity.this, SearchResultsActivity.class);
                     intent.putExtra("SEARCH_QUERY", query);
+                    intent.putExtra("GUEST", true);
                     startActivity(intent);
                 }
                 searchView.clearFocus();

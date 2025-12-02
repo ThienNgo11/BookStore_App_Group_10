@@ -18,7 +18,21 @@ public class OrderItemAdapter extends RecyclerView.Adapter<OrderItemAdapter.Orde
 
     private Context context;
     private List<OrderItem> orderItems;
+    private OnItemClickListener listener; // 1. Khai báo biến listener
 
+    // 2. Tạo Interface để bắt sự kiện click
+    public interface OnItemClickListener {
+        void onItemClick(int bookId);
+    }
+
+    // 3. Constructor nhận thêm listener
+    public OrderItemAdapter(Context context, List<OrderItem> orderItems, OnItemClickListener listener) {
+        this.context = context;
+        this.orderItems = orderItems;
+        this.listener = listener;
+    }
+
+    // Giữ lại constructor cũ (phòng trường hợp chỗ khác gọi chưa kịp sửa)
     public OrderItemAdapter(Context context, List<OrderItem> orderItems) {
         this.context = context;
         this.orderItems = orderItems;
@@ -40,6 +54,14 @@ public class OrderItemAdapter extends RecyclerView.Adapter<OrderItemAdapter.Orde
         holder.tvQuantity.setText("Số lượng: " + orderItem.getQuantity());
         holder.tvPrice.setText(String.format("%,d đ", (int) orderItem.getPrice()));
         holder.tvSubtotal.setText(String.format("Thành tiền: %,d đ", (int) orderItem.getSubtotal()));
+
+        // 4. Bắt sự kiện click vào dòng item
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) {
+                // Truyền bookId ra ngoài Activity
+                listener.onItemClick(orderItem.getBookId());
+            }
+        });
     }
 
     @Override

@@ -170,6 +170,14 @@ public class UserOrdersActivity extends AppCompatActivity {
             Dialog dialog = new Dialog(this);
             dialog.setContentView(R.layout.dialog_user_order_detail);
 
+            // Set chiều rộng dialog full màn hình cho đẹp (Tùy chọn)
+            if (dialog.getWindow() != null) {
+                dialog.getWindow().setLayout(
+                        android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+                        android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+                );
+            }
+
             TextView tvOrderId = dialog.findViewById(R.id.tvOrderId);
             TextView tvOrderDate = dialog.findViewById(R.id.tvOrderDate);
             TextView tvOrderStatus = dialog.findViewById(R.id.tvOrderStatus);
@@ -189,7 +197,20 @@ public class UserOrdersActivity extends AppCompatActivity {
             tvCustomerAddress.setText(fullOrder.getUserAddress() != null ? fullOrder.getUserAddress() : "Chưa cập nhật");
             tvTotalAmount.setText(String.format("%,d đ", (int) fullOrder.getTotalAmount()));
 
-            OrderItemAdapter orderItemAdapter = new OrderItemAdapter(this, orderItems);
+            // ============================================================
+            // SỬA Ở ĐÂY: Thêm sự kiện click để chuyển trang
+            // ============================================================
+            OrderItemAdapter orderItemAdapter = new OrderItemAdapter(this, orderItems, bookId -> {
+                // Khi click vào item trong dialog, chuyển sang BookDetailActivity
+                Intent intent = new Intent(UserOrdersActivity.this, BookDetailActivity.class);
+                intent.putExtra("BOOK_ID", bookId);
+                startActivity(intent);
+
+                // Tùy chọn: Có muốn đóng dialog sau khi click không?
+                // dialog.dismiss(); // Bỏ comment dòng này nếu muốn đóng dialog luôn
+            });
+            // ============================================================
+
             rvOrderItems.setLayoutManager(new LinearLayoutManager(this));
             rvOrderItems.setAdapter(orderItemAdapter);
 
@@ -207,6 +228,7 @@ public class UserOrdersActivity extends AppCompatActivity {
 
             dialog.show();
         } catch (Exception e) {
+            e.printStackTrace(); // In lỗi ra logcat để dễ debug
             Toast.makeText(this, "Lỗi hiển thị chi tiết đơn hàng", Toast.LENGTH_SHORT).show();
         }
     }

@@ -27,10 +27,10 @@ public class BookDetailActivity extends AppCompatActivity {
     private Button btnAddToCart, btnBuyNow;
     private ImageButton btnBack, btnShare, btnFavorite;
 
-    // MỚI: Khai báo các view cho phần số lượng
+    // View số lượng
     private ImageButton btnMinus, btnPlus;
     private TextView tvQuantity;
-    private int currentQuantity = 1; // Mặc định là 1
+    private int currentQuantity = 1;
 
     private BookDAO bookDAO;
     private Book book;
@@ -39,28 +39,32 @@ public class BookDetailActivity extends AppCompatActivity {
     private SessionManager sessionManager;
     private CartDAO cartDAO;
 
+    // Biến kiểm tra xem có phải mở từ GuestActivity không
+    private boolean isGuestMode = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book_detail);
 
-        // Khởi tạo views
+        // 1. Nhận cờ GUEST từ Intent (QUAN TRỌNG)
+        // Nếu bên GuestActivity truyền sang true thì biến này sẽ là true
+        isGuestMode = getIntent().getBooleanExtra("GUEST", false);
+
+        sessionManager = new SessionManager(this);
+        cartDAO = new CartDAO(this);
+        bookDAO = new BookDAO(this);
+
         initViews();
 
-        // Nhận BOOK_ID từ Intent
         bookId = getIntent().getIntExtra("BOOK_ID", -1);
         if (bookId == -1) {
             Toast.makeText(this, "Lỗi: Không tìm thấy sách", Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
-        sessionManager = new SessionManager(this);
-        cartDAO = new CartDAO(this);
-        // Load thông tin sách
-        bookDAO = new BookDAO(this);
-        loadBookDetails();
 
-        // Setup buttons
+        loadBookDetails();
         setupButtons();
     }
 
@@ -77,7 +81,6 @@ public class BookDetailActivity extends AppCompatActivity {
         tvStock = findViewById(R.id.tvStock);
         tvDescription = findViewById(R.id.tvDescription);
 
-        // MỚI: Ánh xạ view số lượng
         btnMinus = findViewById(R.id.btnMinus);
         btnPlus = findViewById(R.id.btnPlus);
         tvQuantity = findViewById(R.id.tvQuantity);
@@ -87,7 +90,6 @@ public class BookDetailActivity extends AppCompatActivity {
     }
 
     private void loadBookDetails() {
-        // Lấy thông tin sách từ database
         book = bookDAO.getBookById(bookId);
 
         if (book == null) {
@@ -96,13 +98,11 @@ public class BookDetailActivity extends AppCompatActivity {
             return;
         }
 
-        // Hiển thị thông tin
         tvTitle.setText(book.getTitle());
         tvAuthor.setText(book.getAuthor());
         tvCategory.setText(book.getCategory());
         tvPrice.setText(String.format("%,.0f đ", book.getPrice()));
 
-        // Hiển thị tình trạng kho
         if (book.getStock() > 0) {
             tvStock.setText("Còn hàng: " + book.getStock() + " cuốn");
             tvStock.setTextColor(getResources().getColor(android.R.color.holo_green_dark));
@@ -117,7 +117,6 @@ public class BookDetailActivity extends AppCompatActivity {
 
         tvDescription.setText(book.getDescription() != null ? book.getDescription() : "Chưa có mô tả");
 
-        // Load ảnh
         Glide.with(this)
                 .load(book.getImage())
                 .placeholder(R.drawable.ic_launcher_background)
@@ -125,23 +124,33 @@ public class BookDetailActivity extends AppCompatActivity {
                 .into(ivBookImage);
     }
 
+    // Hàm kiểm tra Login tập trung
+    private boolean checkLoginRequirement() {
+        // 1. Ưu tiên kiểm tra cờ Guest Mode từ Intent trước
+        if (isGuestMode) {
+            Toast.makeText(this, "Bạn đang xem với tư cách Khách. Vui lòng đăng nhập!", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(BookDetailActivity.this, LoginActivity.class);
+            startActivity(intent);
+            return false; // Chặn lại
+        }
+
+        // 2. Kiểm tra Session (để chắc chắn User hợp lệ)
+        if (!sessionManager.isLoggedIn() || sessionManager.getUserId() <= 0) {
+            Toast.makeText(this, "Vui lòng đăng nhập để thực hiện", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(BookDetailActivity.this, LoginActivity.class);
+            startActivity(intent);
+            return false; // Chặn lại
+        }
+
+        return true; // Cho phép đi tiếp
+    }
+
     private void setupButtons() {
-        // Nút back
         btnBack.setOnClickListener(v -> finish());
 
-        // Nút share
-        btnShare.setOnClickListener(v -> {
-            Toast.makeText(this, "Chia sẻ sách (Chưa implement)", Toast.LENGTH_SHORT).show();
-            // TODO: Implement share functionality
-        });
+        btnShare.setOnClickListener(v -> Toast.makeText(this, "Chức năng đang phát triển", Toast.LENGTH_SHORT).show());
+        btnFavorite.setOnClickListener(v -> Toast.makeText(this, "Chức năng đang phát triển", Toast.LENGTH_SHORT).show());
 
-        // Nút favorite
-        btnFavorite.setOnClickListener(v -> {
-            Toast.makeText(this, "Thêm vào yêu thích (Chưa implement)", Toast.LENGTH_SHORT).show();
-            // TODO: Implement favorite functionality
-        });
-
-        // MỚI: Logic nút Giảm (-)
         btnMinus.setOnClickListener(v -> {
             if (currentQuantity > 1) {
                 currentQuantity--;
@@ -149,9 +158,7 @@ public class BookDetailActivity extends AppCompatActivity {
             }
         });
 
-        // MỚI: Logic nút Tăng (+)
         btnPlus.setOnClickListener(v -> {
-            // Kiểm tra xem có vượt quá tồn kho không
             if (book != null && currentQuantity < book.getStock()) {
                 currentQuantity++;
                 tvQuantity.setText(String.valueOf(currentQuantity));
@@ -160,14 +167,17 @@ public class BookDetailActivity extends AppCompatActivity {
             }
         });
 
+        // ============================================
+        // NÚT THÊM VÀO GIỎ
+        // ============================================
         btnAddToCart.setOnClickListener(v -> {
-
-            int userId = sessionManager.getUserId();
-            if (userId == -1) {
-                Toast.makeText(this, "Vui lòng đăng nhập", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(this, LoginActivity.class));
+            // GỌI HÀM KIỂM TRA (Nếu false nghĩa là chưa login -> return luôn)
+            if (!checkLoginRequirement()) {
                 return;
             }
+
+            // Code chạy xuống đây nghĩa là Đã Login hợp lệ
+            int userId = sessionManager.getUserId();
 
             if (book.getStock() <= 0) {
                 Toast.makeText(this, "Sách đã hết hàng", Toast.LENGTH_SHORT).show();
@@ -177,54 +187,44 @@ public class BookDetailActivity extends AppCompatActivity {
             CartItem existing = cartDAO.getCartItem(userId, book.getId());
 
             if (existing != null) {
-                // Tính tổng số lượng mới = số lượng đang có trong giỏ + số lượng muốn thêm
                 int newTotalQuantity = existing.getQuantity() + currentQuantity;
-
-                // Kiểm tra xem tổng số lượng có vượt quá kho không
                 if (newTotalQuantity > book.getStock()) {
                     Toast.makeText(this, "Tổng số lượng (" + newTotalQuantity + ") vượt quá tồn kho", Toast.LENGTH_SHORT).show();
                     return;
                 }
-
-                // SỬA: Dùng newTotalQuantity thay vì (existing.getQuantity() + 1)
                 cartDAO.updateQuantity(existing.getId(), newTotalQuantity);
-                Toast.makeText(this, "Đã thêm " + currentQuantity + " cuốn vào giỏ", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Đã cập nhật số lượng trong giỏ", Toast.LENGTH_SHORT).show();
             } else {
-                // SỬA: Dùng currentQuantity thay vì số 1 cứng
                 boolean ok = cartDAO.addToCart(userId, book.getId(), currentQuantity);
-
                 if (ok) Toast.makeText(this, "Đã thêm " + currentQuantity + " cuốn vào giỏ", Toast.LENGTH_SHORT).show();
                 else Toast.makeText(this, "Lỗi khi thêm giỏ hàng", Toast.LENGTH_SHORT).show();
             }
         });
 
-
-        // ==========================
-        // MUA NGAY (MẶC ĐỊNH 1 CUỐN)
-        // ==========================
+        // ==========================================
+        // NÚT MUA NGAY
+        // ==========================================
         btnBuyNow.setOnClickListener(v -> {
-
-            int userId = sessionManager.getUserId();
-            if (userId == -1) {
-                Toast.makeText(this, "Vui lòng đăng nhập", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(this, LoginActivity.class));
+            // GỌI HÀM KIỂM TRA
+            if (!checkLoginRequirement()) {
                 return;
             }
+
+            int userId = sessionManager.getUserId();
 
             if (book.getStock() <= 0) {
                 Toast.makeText(this, "Sách đã hết hàng", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            // Tạo CartItem tạm để truyền qua CheckoutActivity
             CartItem temp = new CartItem(
-                    0,                 // id tạm
+                    0,
                     userId,
                     book.getId(),
                     book.getTitle(),
                     book.getImage(),
                     book.getPrice(),
-                    currentQuantity,// Mua ngay = 1
+                    currentQuantity,
                     book.getStock()
             );
 
@@ -232,7 +232,6 @@ public class BookDetailActivity extends AppCompatActivity {
             ArrayList<CartItem> list = new ArrayList<>();
             list.add(temp);
             intent.putExtra("SELECTED_ITEMS", list);
-
             startActivity(intent);
         });
     }

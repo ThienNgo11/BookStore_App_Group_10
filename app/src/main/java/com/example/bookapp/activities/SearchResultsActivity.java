@@ -8,11 +8,10 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-// MỚI: Thêm import cho SearchView
-import androidx.appcompat.widget.SearchView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -31,7 +30,6 @@ public class SearchResultsActivity extends AppCompatActivity {
 
     private RecyclerView rvSearchResults;
     private BookAdapter adapter;
-    // NÂNG CẤP: Thay tvNoResults bằng layout
     private View layoutNoResults;
     private TextView tvNoResultsTitle;
 
@@ -40,7 +38,6 @@ public class SearchResultsActivity extends AppCompatActivity {
     private BookDAO bookDAO;
     private String query;
 
-    // MỚI: Thêm SearchView
     private SearchView searchView;
     private ImageView ivBack;
 
@@ -49,28 +46,31 @@ public class SearchResultsActivity extends AppCompatActivity {
     private String currentPriceRange = "Tất cả";
     private String currentSortOption = "Mặc định";
 
+    // MỚI: Biến lưu trạng thái Guest
+    private boolean isGuestMode = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_results);
 
+        // 1. Nhận cờ GUEST từ Activity trước đó (GuestActivity hoặc MainActivity)
+        isGuestMode = getIntent().getBooleanExtra("GUEST", false);
+
         if (getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         rvSearchResults = findViewById(R.id.rvSearchResults);
-        // NÂNG CẤP: Ánh xạ layout mới
         layoutNoResults = findViewById(R.id.layoutNoResults);
         tvNoResultsTitle = findViewById(R.id.tvNoResultsTitle);
 
         btnOpenFilter = findViewById(R.id.btnOpenFilter);
         tvActiveFilters = findViewById(R.id.tvActiveFilters);
 
-        // MỚI: Ánh xạ SearchView
         searchView = findViewById(R.id.searchViewResults);
         ivBack = findViewById(R.id.ivBack);
 
         ivBack.setOnClickListener(v -> {
-            // Kết thúc activity hiện tại để quay lại màn hình trước
             finish();
         });
 
@@ -79,46 +79,41 @@ public class SearchResultsActivity extends AppCompatActivity {
 
         if (query != null && !query.isEmpty()) {
             setTitle("Kết quả cho: '" + query + "'");
-            searchView.setQuery(query, false); // Hiển thị query lên SearchView
-            loadResults(); // Tải kết quả lần đầu
+            searchView.setQuery(query, false);
+            loadResults();
         } else {
             setTitle("Tìm kiếm");
-            layoutNoResults.setVisibility(View.VISIBLE); // Hiển thị nếu không có query
+            layoutNoResults.setVisibility(View.VISIBLE);
         }
 
         btnOpenFilter.setOnClickListener(v -> showFilterBottomSheet());
 
-        // MỚI: Thêm logic cho SearchView
         setupSearchView();
 
         updateActiveFiltersText();
     }
 
-    // MỚI: Tách logic của SearchView ra một hàm riêng
     private void setupSearchView() {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String newQuery) {
                 if (newQuery != null && !newQuery.trim().isEmpty()) {
-                    // Khi người dùng tìm kiếm lại, cập nhật query và tải lại kết quả
                     query = newQuery;
                     setTitle("Kết quả cho: '" + query + "'");
-                    loadResults(); // Tải lại kết quả với query mới
+                    loadResults();
                 }
-                searchView.clearFocus(); // Ẩn bàn phím
+                searchView.clearFocus();
                 return true;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                // Không làm gì khi đang gõ
                 return false;
             }
         });
     }
 
     private void showFilterBottomSheet() {
-        // ... (Giữ nguyên code của hàm này như bạn đã có) ...
         BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this, R.style.BottomSheetDialogTheme);
         View sheetView = LayoutInflater.from(this).inflate(R.layout.bottom_sheet_filter, null);
 
@@ -127,8 +122,6 @@ public class SearchResultsActivity extends AppCompatActivity {
         ChipGroup chipGroupSort = sheetView.findViewById(R.id.chipGroupSort);
         MaterialButton btnApplyFilter = sheetView.findViewById(R.id.btnApplyFilter);
         View ivCloseSheet = sheetView.findViewById(R.id.ivCloseSheet);
-
-        // (Bạn có thể thêm logic để set chip_checked ở đây)
 
         ivCloseSheet.setOnClickListener(v -> bottomSheetDialog.dismiss());
 
@@ -162,7 +155,6 @@ public class SearchResultsActivity extends AppCompatActivity {
 
 
     private void updateActiveFiltersText() {
-        // ... (Giê nguyên code của hàm này) ...
         StringBuilder filtersText = new StringBuilder();
         if (!currentCategory.equals("Tất cả")) {
             filtersText.append(currentCategory).append(" | ");
@@ -181,32 +173,29 @@ public class SearchResultsActivity extends AppCompatActivity {
         }
     }
 
-    // NÂNG CẤP: Cập nhật hàm loadResults
     private void loadResults() {
         List<Book> books = bookDAO.searchBooks(query, currentCategory, currentPriceRange, currentSortOption);
 
         if (books.isEmpty()) {
-            // Khi không có sách
-            rvSearchResults.setVisibility(View.GONE); // Ẩn danh sách
-            layoutNoResults.setVisibility(View.VISIBLE); // Hiện layout thông báo
-
-            // Cập nhật text để thân thiện hơn
+            rvSearchResults.setVisibility(View.GONE);
+            layoutNoResults.setVisibility(View.VISIBLE);
             tvNoResultsTitle.setText("Không tìm thấy '" + query + "'");
         } else {
-            // Khi có sách
-            rvSearchResults.setVisibility(View.VISIBLE); // Hiện danh sách
-            layoutNoResults.setVisibility(View.GONE); // Ẩn layout thông báo
+            rvSearchResults.setVisibility(View.VISIBLE);
+            layoutNoResults.setVisibility(View.GONE);
 
             rvSearchResults.setLayoutManager(new GridLayoutManager(this, 2));
+
+            // 2. TRUYỀN CỜ GUEST TIẾP TỤC SANG BOOK DETAIL
             adapter = new BookAdapter(this, books, book -> {
                 Intent intent = new Intent(SearchResultsActivity.this, BookDetailActivity.class);
                 intent.putExtra("BOOK_ID", book.getId());
+                intent.putExtra("GUEST", isGuestMode); // <--- QUAN TRỌNG: Truyền tiếp cờ này
                 startActivity(intent);
             });
             rvSearchResults.setAdapter(adapter);
         }
     }
-
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {

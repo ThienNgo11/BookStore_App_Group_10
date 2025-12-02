@@ -81,11 +81,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "('user2', '04f8996da763b7a969b1028ee3007569eaf3a635486ddab211d512c85b9df8fb', 'Trần Thị B', 'user2@gmail.com', '0909090909', 'Đà Nẵng', 'user', 1)");
 
         // ========================================
-        // THÊM BOOKS MẶC ĐỊNH (15 CUỐN)
+        // THÊM BOOKS MẶC ĐỊNH (15 CUỐN) – SÁCH NỔI TIẾNG VIỆT NAM
         // ========================================
-        // ========================================
-// THÊM BOOKS MẶC ĐỊNH (15 CUỐN) – SÁCH NỔI TIẾNG VIỆT NAM
-// ========================================
         db.execSQL("INSERT INTO books (title, author, category, description, price, stock, image) VALUES " +
                 "('Dám Bị Ghét', 'Koga Fumitake', 'Tâm lý', 'Cuốn sách giúp thay đổi tư duy và sống tự do hơn.', 89000, 20, 'https://thuvienninhthuan.vn/Upload/2021/12/22/Dam%20bi%20ghet.jpg_2021Thg1222_034414130(1).jpg')");
 
